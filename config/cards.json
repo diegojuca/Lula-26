@@ -2,25 +2,188 @@
   "fechos_de_risco": false,
   "responsavel_obrigatorio": true,
   "fechos": {
-    "F1": {"texto": "Com Lula, continua e cresce.", "tipo": "afirmativo"},
-    "F2": {"texto": "Foi o Lula que fez.", "tipo": "afirmativo"},
-    "F3": {"texto": "Foi o Lula que trouxe de volta.", "tipo": "afirmativo"},
-    "F4": {"texto": "Isso é o Brasil que dá certo.", "tipo": "afirmativo"},
-    "F5": {"texto": "Conta pra quem ainda não sabe.", "tipo": "afirmativo"},
-    "R1": {"texto": "Sem Lula, isso pode acabar.", "tipo": "risco"},
-    "R2": {"texto": "Já tentaram acabar uma vez.", "tipo": "risco"}
+    "F1": {
+      "texto": "Com Lula, continua e cresce.",
+      "tipo": "afirmativo"
+    },
+    "F2": {
+      "texto": "Foi o Lula que fez.",
+      "tipo": "afirmativo"
+    },
+    "F3": {
+      "texto": "Foi o Lula que trouxe de volta.",
+      "tipo": "afirmativo"
+    },
+    "F4": {
+      "texto": "Isso é o Brasil que dá certo.",
+      "tipo": "afirmativo"
+    },
+    "F5": {
+      "texto": "Conta pra quem ainda não sabe.",
+      "tipo": "afirmativo"
+    },
+    "R1": {
+      "texto": "Sem Lula, isso pode acabar.",
+      "tipo": "risco"
+    },
+    "R2": {
+      "texto": "Já tentaram acabar uma vez.",
+      "tipo": "risco"
+    }
   },
   "limites": {
-    "BF-HOJE": {"min": 100, "dado_max_meses": 3}, "BF-VALOR": {"min": 100000, "dado_max_meses": 3},
-    "PDM-HOJE": {"min": 50, "dado_max_meses": 6}, "MM-HOJE": {"min": 3, "dado_max_meses": 3},
-    "MM-RETOMADA": {"min": 3}, "UBS-BAIRRO": {"min": 2}, "CISTERNAS": {"min": 50},
-    "CENSO-BAIRRO": {"min_pp": 3.0, "min_domicilios": 200}, "POBREZA-MUN": {"min_pp": 3.0}, "MORT-INF-MUN": {"min_queda": 2.0},
-    "BF-3T": {}, "MM-3T": {"min": 3}, "SM-3T": {}, "FOME-BR": {"min_pp": 0.5}, "FOME-UF-L3": {"min_pp": 0.5}
+    "BF-HOJE": {
+      "min": 100,
+      "dado_max_meses": 3
+    },
+    "BF-VALOR": {
+      "min": 100000,
+      "dado_max_meses": 3
+    },
+    "PDM-HOJE": {
+      "min": 50,
+      "dado_max_meses": 6
+    },
+    "MM-HOJE": {
+      "min": 2,
+      "dado_max_meses": 3
+    },
+    "MM-RETOMADA": {
+      "min": 2
+    },
+    "UBS-BAIRRO": {
+      "min": 2
+    },
+    "CISTERNAS": {
+      "min": 50
+    },
+    "CENSO-BAIRRO": {
+      "min_pp": 3.0,
+      "min_domicilios": 200
+    },
+    "POBREZA-MUN": {
+      "min_pp": 3.0
+    },
+    "MORT-INF-MUN": {
+      "min_queda": 2.0
+    },
+    "BF-3T": {},
+    "MM-3T": {
+      "min": 3
+    },
+    "SM-3T": {},
+    "FOME-BR": {
+      "min_pp": 0.5
+    },
+    "FOME-UF-L3": {
+      "min_pp": 0.5
+    }
   },
   "fechos_por_modelo": {
-    "BF-HOJE": ["F1", "F5", "R1"], "BF-VALOR": ["F1", "F5"], "PDM-HOJE": ["F2", "F1"], "MM-HOJE": ["F3", "F1"],
-    "BF-ORIGEM": ["F2", "R2"], "MM-RETOMADA": ["F3", "R2"], "MCMV-ORIGEM": ["F2"], "UBS-BAIRRO": ["F5"], "CISTERNAS": ["F5"],
-    "CENSO-BAIRRO": ["F4", "F5"], "POBREZA-MUN": ["F4", "F5"], "MORT-INF-MUN": ["F4", "F5"],
-    "BF-3T": ["F1"], "MM-3T": ["F3"], "SM-3T": ["F1"], "FOME-BR": ["F4"], "FOME-UF-L3": ["F1"]
+    "BF-HOJE": [
+      "F1",
+      "F5",
+      "R1"
+    ],
+    "BF-VALOR": [
+      "F1",
+      "F5"
+    ],
+    "PDM-HOJE": [
+      "F2",
+      "F1"
+    ],
+    "MM-HOJE": [
+      "F3",
+      "F1"
+    ],
+    "BF-ORIGEM": [
+      "F2",
+      "R2"
+    ],
+    "MM-RETOMADA": [
+      "F3",
+      "R2"
+    ],
+    "MCMV-ORIGEM": [
+      "F2"
+    ],
+    "UBS-BAIRRO": [
+      "F5"
+    ],
+    "CISTERNAS": [
+      "F5"
+    ],
+    "CENSO-BAIRRO": [
+      "F4",
+      "F5"
+    ],
+    "POBREZA-MUN": [
+      "F4",
+      "F5"
+    ],
+    "MORT-INF-MUN": [
+      "F4",
+      "F5"
+    ],
+    "BF-3T": [
+      "F1"
+    ],
+    "MM-3T": [
+      "F3"
+    ],
+    "SM-3T": [
+      "F1"
+    ],
+    "FOME-BR": [
+      "F4"
+    ],
+    "FOME-UF-L3": [
+      "F1"
+    ]
+  },
+  "modelos_desligados": [
+    "MM-3T"
+  ],
+  "relevancia": {
+    "programas_prioritarios": [
+      "Bolsa Família",
+      "Mais Médicos",
+      "Cisternas",
+      "Luz para Todos",
+      "Minha Casa Minha Vida",
+      "Farmácia Popular",
+      "ProUni",
+      "Pé-de-Meia"
+    ],
+    "bolsa_familia": {
+      "min_familias_pct": 15,
+      "min_pessoas": 5000
+    },
+    "mais_medicos": {
+      "por_10mil": 1,
+      "min_pequena": 2,
+      "pop_pequena": 20000,
+      "pessoas_por_medico": 3000
+    },
+    "cisternas": {
+      "min_domicilios_pct": 10,
+      "min_n": 1000
+    },
+    "pe_de_meia": {
+      "min_pop_pct": 1.0,
+      "min_n": 1000
+    },
+    "antes_depois": {
+      "min_pp": 15,
+      "infra_censo_min_pp": 25,
+      "min_reducao_pct": 40,
+      "base_min_pct": 5,
+      "base_min_mortalidade_por_mil": 20
+    },
+    "bonus_prioritario": 0.5,
+    "max_por_lugar": 5,
+    "max_por_programa": 2,
+    "amplos_se_locais_menor_que": 3
   }
 }

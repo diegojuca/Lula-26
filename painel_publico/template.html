@@ -846,7 +846,13 @@ const CARDS = (function(){
       $("#cd-filtro").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.k===filtro)); desenhaLista(); };
     function marcaURL(){ const nb = bsel ? d.b[bsel].nome : ""; try{ history.replaceState(null, "", `#/${c.uf}/${slug(c.nome)}` + (nb ? `/${slug(nb)}` : "")); }catch(e){} }
     function desenhaLista(){
-      const lista = [...(bsel ? d.b[bsel].cards : []), ...d.c, ...((br.uf||{})[c.uf]||[]), ...br.br].map(fix).filter(k => filtro==="todos" || k.cat===filtro);
+      // locais (bairro + cidade) pela pontuação de impacto, com teto por lugar e por programa; estado e Brasil só completam
+      // quando o lugar tem poucos cards locais
+      const R = br.regras || {max:5, prog:2, amplos:3}, por = {}, locais = [];
+      [...(bsel ? d.b[bsel].cards : []), ...d.c].sort((x,y) => (y.s||0)-(x.s||0)).forEach(k => {
+        if(locais.length >= R.max || (por[k.prog]||0) >= R.prog) return; por[k.prog] = (por[k.prog]||0)+1; locais.push(k); });
+      const amplos = locais.length < R.amplos ? [...((br.uf||{})[c.uf]||[]), ...br.br].sort((x,y) => (y.s||0)-(x.s||0)).slice(0, R.max - locais.length) : [];
+      const lista = [...locais, ...amplos].map(fix).filter(k => filtro==="todos" || k.cat===filtro);
       const el = $("#cd-lista");
       if(!lista.length){ el.innerHTML = `<p class="cards-vazio">Nenhum card deste tipo para este lugar. Os cards só saem quando o dado é verdadeiro, recente e do nível certo.</p>`; return; }
       el.innerHTML = lista.map((k,i)=>`<div class="cd ${fmt}"><img alt="${esc(k.texto)}" data-i="${i}" loading="lazy"><div class="meta">${NIV[k.nivel]||""} · ${esc(k.fonteTxt)} · ${esc(k.periodo)}</div>

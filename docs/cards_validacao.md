@@ -9,23 +9,17 @@ Os cards de estado e Brasil aparecem para todos os lugares e estão no fim.
 
 | Modelo | Nível | Valor | Texto | Fecho | Período | Fonte |
 |---|---|---|---|---|---|---|
-| CENSO-BAIRRO | bairro | 82% → 85% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, os domicílios com água da rede geral em Várzea (Recife) passaram de 82% para 85%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [IBGE, Censos 2000 e 2010 (agregados por setor)](https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_do_Universo/Agregados_por_Setores_Censitarios/) |
-| CENSO-BAIRRO | bairro | 31% → 38% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, os domicílios com esgoto por rede geral em Várzea (Recife) passaram de 31% para 38%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [IBGE, Censos 2000 e 2010 (agregados por setor)](https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_do_Universo/Agregados_por_Setores_Censitarios/) |
-| UBS-BAIRRO | bairro | 8 | Várzea (Recife): 8 unidades básicas de saúde do SUS atendem o bairro. | Conta pra quem ainda não sabe. | out/2026 | [Ministério da Saúde, cadastro de UBS](https://apidadosabertos.saude.gov.br/v1/) |
+| — | | | nenhum card de bairro | | | |
 
 **Cards da cidade**
 
 | Modelo | Nível | Valor | Texto | Fecho | Período | Fonte |
 |---|---|---|---|---|---|---|
-| BF-HOJE | cidade | 139.327 | Recife (PE): 139.327 famílias recebem o Bolsa Família. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| BF-ORIGEM | cidade | 2003 | O Bolsa Família, que hoje atende 139.327 famílias em Recife, foi criado em 2003, no governo Lula. | Foi o Lula que fez. | 2003; set/2026 | [Planalto (MP 132/2003, convertida na Lei 10.836/2004); MDS](https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2004/lei/l10.836.htm) |
-| BF-VALOR | cidade | R$ 92,4 milhões | Recife (PE): o Bolsa Família pagou R$ 92,4 milhões às famílias daqui em set/2026. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| PDM-HOJE | cidade | 35.548 | Recife (PE): estudantes daqui receberam 35.548 parcelas do Pé-de-Meia em jun/2026. | Foi o Lula que fez. | jun/2026 | [CGU, Portal da Transparência](https://portaldatransparencia.gov.br/download-de-dados/pe-de-meia) |
 | MM-HOJE | cidade | 292 | Recife (PE): 292 médicos do Mais Médicos atendem hoje. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Ministério da Saúde](https://apidadosabertos.saude.gov.br/v1/) |
 | MM-RETOMADA | cidade | 2023 | O Mais Médicos foi retomado em 2023, no governo Lula. Hoje são 292 médicos do programa em Recife. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Planalto (Lei 14.621/2023); Ministério da Saúde, 09/10/2026](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/l14621.htm) |
-| MM-3T | cidade | Dilma: 37 · Temer e Bolsonaro: 31 · Lula 3: 288 | Recife (PE): médicos do Mais Médicos em dezembro, média por governo. | Foi o Lula que trouxe de volta. | dez/2013 a 2026 | [Ministério da Saúde, série histórica do programa](https://apidadosabertos.saude.gov.br/v1/) |
+| BF-HOJE | cidade | 139.327 | Recife (PE): 139.327 famílias recebem o Bolsa Família. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
+| BF-ORIGEM | cidade | 2003 | O Bolsa Família, que hoje atende 139.327 famílias em Recife, foi criado em 2003, no governo Lula. | Foi o Lula que fez. | 2003; set/2026 | [Planalto (MP 132/2003, convertida na Lei 10.836/2004); MDS](https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2004/lei/l10.836.htm) |
 | POBREZA-MUN | cidade | 25,7% → 13,2% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a parcela de pessoas pobres em Recife caiu de 25,7% para 13,2%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
-| MORT-INF-MUN | cidade | 29,8 → 15,6 | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a mortalidade até 1 ano de idade (por mil nascidos vivos, estimativa) em Recife caiu de 29,8 para 15,6. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
 
 **Bloqueados**
 
@@ -40,10 +34,7 @@ Os cards de estado e Brasil aparecem para todos os lugares e estão no fim.
 
 | Modelo | Nível | Valor | Texto | Fecho | Período | Fonte |
 |---|---|---|---|---|---|---|
-| CENSO-BAIRRO | bairro | 92% → 98% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, os domicílios com água da rede geral em Bom Jardim (Fortaleza) passaram de 92% para 98%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [IBGE, Censos 2000 e 2010 (agregados por setor)](https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_do_Universo/Agregados_por_Setores_Censitarios/) |
 | CENSO-BAIRRO | bairro | 10% → 41% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, os domicílios com esgoto por rede geral em Bom Jardim (Fortaleza) passaram de 10% para 41%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [IBGE, Censos 2000 e 2010 (agregados por setor)](https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_do_Universo/Agregados_por_Setores_Censitarios/) |
-| CENSO-BAIRRO | bairro | 92% → 99% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, os domicílios com lixo coletado em Bom Jardim (Fortaleza) passaram de 92% para 99%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [IBGE, Censos 2000 e 2010 (agregados por setor)](https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_do_Universo/Agregados_por_Setores_Censitarios/) |
-| UBS-BAIRRO | bairro | 2 | Bom Jardim (Fortaleza): 2 unidades básicas de saúde do SUS atendem o bairro. | Conta pra quem ainda não sabe. | out/2026 | [Ministério da Saúde, cadastro de UBS](https://apidadosabertos.saude.gov.br/v1/) |
 
 **Cards da cidade**
 
@@ -51,13 +42,9 @@ Os cards de estado e Brasil aparecem para todos os lugares e estão no fim.
 |---|---|---|---|---|---|---|
 | BF-HOJE | cidade | 303.317 | Fortaleza (CE): 303.317 famílias recebem o Bolsa Família. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
 | BF-ORIGEM | cidade | 2003 | O Bolsa Família, que hoje atende 303.317 famílias em Fortaleza, foi criado em 2003, no governo Lula. | Foi o Lula que fez. | 2003; set/2026 | [Planalto (MP 132/2003, convertida na Lei 10.836/2004); MDS](https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2004/lei/l10.836.htm) |
-| BF-VALOR | cidade | R$ 199,5 milhões | Fortaleza (CE): o Bolsa Família pagou R$ 199,5 milhões às famílias daqui em set/2026. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| PDM-HOJE | cidade | 69.899 | Fortaleza (CE): estudantes daqui receberam 69.899 parcelas do Pé-de-Meia em jun/2026. | Foi o Lula que fez. | jun/2026 | [CGU, Portal da Transparência](https://portaldatransparencia.gov.br/download-de-dados/pe-de-meia) |
-| MM-HOJE | cidade | 226 | Fortaleza (CE): 226 médicos do Mais Médicos atendem hoje. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Ministério da Saúde](https://apidadosabertos.saude.gov.br/v1/) |
-| MM-RETOMADA | cidade | 2023 | O Mais Médicos foi retomado em 2023, no governo Lula. Hoje são 226 médicos do programa em Fortaleza. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Planalto (Lei 14.621/2023); Ministério da Saúde, 09/10/2026](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/l14621.htm) |
-| MM-3T | cidade | Dilma: 168 · Temer e Bolsonaro: 175 · Lula 3: 217 | Fortaleza (CE): médicos do Mais Médicos em dezembro, média por governo. | Foi o Lula que trouxe de volta. | dez/2013 a 2026 | [Ministério da Saúde, série histórica do programa](https://apidadosabertos.saude.gov.br/v1/) |
 | POBREZA-MUN | cidade | 27,5% → 12,1% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a parcela de pessoas pobres em Fortaleza caiu de 27,5% para 12,1%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
 | MORT-INF-MUN | cidade | 34,6 → 15,8 | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a mortalidade até 1 ano de idade (por mil nascidos vivos, estimativa) em Fortaleza caiu de 34,6 para 15,8. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
+| PDM-HOJE | cidade | 69.899 | Fortaleza (CE): estudantes daqui receberam 69.899 parcelas do Pé-de-Meia em jun/2026. | Foi o Lula que fez. | jun/2026 | [CGU, Portal da Transparência](https://portaldatransparencia.gov.br/download-de-dados/pe-de-meia) |
 
 **Bloqueados**
 
@@ -72,22 +59,16 @@ Os cards de estado e Brasil aparecem para todos os lugares e estão no fim.
 | Modelo | Nível | Valor | Texto | Fecho | Período | Fonte |
 |---|---|---|---|---|---|---|
 | CENSO-BAIRRO | bairro | 11% → 38% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, os domicílios com esgoto por rede geral em Guamá (Belém) passaram de 11% para 38%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [IBGE, Censos 2000 e 2010 (agregados por setor)](https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Resultados_do_Universo/Agregados_por_Setores_Censitarios/) |
-| UBS-BAIRRO | bairro | 2 | Guamá (Belém): 2 unidades básicas de saúde do SUS atendem o bairro. | Conta pra quem ainda não sabe. | out/2026 | [Ministério da Saúde, cadastro de UBS](https://apidadosabertos.saude.gov.br/v1/) |
 
 **Cards da cidade**
 
 | Modelo | Nível | Valor | Texto | Fecho | Período | Fonte |
 |---|---|---|---|---|---|---|
-| BF-HOJE | cidade | 147.006 | Belém (PA): 147.006 famílias recebem o Bolsa Família. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| BF-ORIGEM | cidade | 2003 | O Bolsa Família, que hoje atende 147.006 famílias em Belém, foi criado em 2003, no governo Lula. | Foi o Lula que fez. | 2003; set/2026 | [Planalto (MP 132/2003, convertida na Lei 10.836/2004); MDS](https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2004/lei/l10.836.htm) |
-| BF-VALOR | cidade | R$ 96,1 milhões | Belém (PA): o Bolsa Família pagou R$ 96,1 milhões às famílias daqui em set/2026. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| CISTERNAS | cidade | 115 | Belém (PA): 115 cisternas foram entregues pelo programa federal de cisternas até abr/2026. | Conta pra quem ainda não sabe. | até abr/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| PDM-HOJE | cidade | 35.387 | Belém (PA): estudantes daqui receberam 35.387 parcelas do Pé-de-Meia em jun/2026. | Foi o Lula que fez. | jun/2026 | [CGU, Portal da Transparência](https://portaldatransparencia.gov.br/download-de-dados/pe-de-meia) |
 | MM-HOJE | cidade | 199 | Belém (PA): 199 médicos do Mais Médicos atendem hoje. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Ministério da Saúde](https://apidadosabertos.saude.gov.br/v1/) |
 | MM-RETOMADA | cidade | 2023 | O Mais Médicos foi retomado em 2023, no governo Lula. Hoje são 199 médicos do programa em Belém. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Planalto (Lei 14.621/2023); Ministério da Saúde, 09/10/2026](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/l14621.htm) |
-| MM-3T | cidade | Dilma: 25 · Temer e Bolsonaro: 34 · Lula 3: 205 | Belém (PA): médicos do Mais Médicos em dezembro, média por governo. | Foi o Lula que trouxe de volta. | dez/2013 a 2026 | [Ministério da Saúde, série histórica do programa](https://apidadosabertos.saude.gov.br/v1/) |
+| BF-HOJE | cidade | 147.006 | Belém (PA): 147.006 famílias recebem o Bolsa Família. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
+| BF-ORIGEM | cidade | 2003 | O Bolsa Família, que hoje atende 147.006 famílias em Belém, foi criado em 2003, no governo Lula. | Foi o Lula que fez. | 2003; set/2026 | [Planalto (MP 132/2003, convertida na Lei 10.836/2004); MDS](https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2004/lei/l10.836.htm) |
 | POBREZA-MUN | cidade | 24,4% → 13,0% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a parcela de pessoas pobres em Belém caiu de 24,4% para 13,0%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
-| MORT-INF-MUN | cidade | 26,4 → 16,1 | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a mortalidade até 1 ano de idade (por mil nascidos vivos, estimativa) em Belém caiu de 26,4 para 16,1. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
 
 **Bloqueados**
 
@@ -105,13 +86,8 @@ Os cards de estado e Brasil aparecem para todos os lugares e estão no fim.
 |---|---|---|---|---|---|---|
 | BF-HOJE | cidade | 7.939 | Exu (PE): 7.939 famílias recebem o Bolsa Família. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
 | BF-ORIGEM | cidade | 2003 | O Bolsa Família, que hoje atende 7.939 famílias em Exu, foi criado em 2003, no governo Lula. | Foi o Lula que fez. | 2003; set/2026 | [Planalto (MP 132/2003, convertida na Lei 10.836/2004); MDS](https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2004/lei/l10.836.htm) |
-| BF-VALOR | cidade | R$ 5,3 milhões | Exu (PE): o Bolsa Família pagou R$ 5,3 milhões às famílias daqui em set/2026. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| CISTERNAS | cidade | 1.393 | Exu (PE): 1.393 cisternas foram entregues pelo programa federal de cisternas até abr/2026. | Conta pra quem ainda não sabe. | até abr/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| PDM-HOJE | cidade | 1.546 | Exu (PE): estudantes daqui receberam 1.546 parcelas do Pé-de-Meia em jun/2026. | Foi o Lula que fez. | jun/2026 | [CGU, Portal da Transparência](https://portaldatransparencia.gov.br/download-de-dados/pe-de-meia) |
 | MM-HOJE | cidade | 4 | Exu (PE): 4 médicos do Mais Médicos atendem hoje. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Ministério da Saúde](https://apidadosabertos.saude.gov.br/v1/) |
 | MM-RETOMADA | cidade | 2023 | O Mais Médicos foi retomado em 2023, no governo Lula. Hoje são 4 médicos do programa em Exu. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Planalto (Lei 14.621/2023); Ministério da Saúde, 09/10/2026](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/l14621.htm) |
-| MM-3T | cidade | Dilma: 1 · Temer e Bolsonaro: 1 · Lula 3: 5 | Exu (PE): médicos do Mais Médicos em dezembro, média por governo. | Foi o Lula que trouxe de volta. | dez/2013 a 2026 | [Ministério da Saúde, série histórica do programa](https://apidadosabertos.saude.gov.br/v1/) |
-| POBREZA-MUN | cidade | 76,0% → 52,2% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a parcela de pessoas pobres em Exu caiu de 76,0% para 52,2%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
 | MORT-INF-MUN | cidade | 62,1 → 22,7 | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a mortalidade até 1 ano de idade (por mil nascidos vivos, estimativa) em Exu caiu de 62,1 para 22,7. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
 
 **Bloqueados**
@@ -126,16 +102,11 @@ Os cards de estado e Brasil aparecem para todos os lugares e estão no fim.
 
 | Modelo | Nível | Valor | Texto | Fecho | Período | Fonte |
 |---|---|---|---|---|---|---|
-| BF-HOJE | cidade | 3.901 | Canudos (BA): 3.901 famílias recebem o Bolsa Família. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| BF-ORIGEM | cidade | 2003 | O Bolsa Família, que hoje atende 3.901 famílias em Canudos, foi criado em 2003, no governo Lula. | Foi o Lula que fez. | 2003; set/2026 | [Planalto (MP 132/2003, convertida na Lei 10.836/2004); MDS](https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2004/lei/l10.836.htm) |
-| BF-VALOR | cidade | R$ 2,6 milhões | Canudos (BA): o Bolsa Família pagou R$ 2,6 milhões às famílias daqui em set/2026. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| CISTERNAS | cidade | 1.380 | Canudos (BA): 1.380 cisternas foram entregues pelo programa federal de cisternas até abr/2026. | Conta pra quem ainda não sabe. | até abr/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| PDM-HOJE | cidade | 624 | Canudos (BA): estudantes daqui receberam 624 parcelas do Pé-de-Meia em jun/2026. | Foi o Lula que fez. | jun/2026 | [CGU, Portal da Transparência](https://portaldatransparencia.gov.br/download-de-dados/pe-de-meia) |
 | MM-HOJE | cidade | 6 | Canudos (BA): 6 médicos do Mais Médicos atendem hoje. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Ministério da Saúde](https://apidadosabertos.saude.gov.br/v1/) |
 | MM-RETOMADA | cidade | 2023 | O Mais Médicos foi retomado em 2023, no governo Lula. Hoje são 6 médicos do programa em Canudos. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Planalto (Lei 14.621/2023); Ministério da Saúde, 09/10/2026](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/l14621.htm) |
-| MM-3T | cidade | Dilma: 2 · Temer e Bolsonaro: 2 · Lula 3: 6 | Canudos (BA): médicos do Mais Médicos em dezembro, média por governo. | Foi o Lula que trouxe de volta. | dez/2013 a 2026 | [Ministério da Saúde, série histórica do programa](https://apidadosabertos.saude.gov.br/v1/) |
-| POBREZA-MUN | cidade | 67,7% → 43,8% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a parcela de pessoas pobres em Canudos caiu de 67,7% para 43,8%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
-| MORT-INF-MUN | cidade | 60,1 → 36,0 | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a mortalidade até 1 ano de idade (por mil nascidos vivos, estimativa) em Canudos caiu de 60,1 para 36,0. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
+| BF-HOJE | cidade | 3.901 | Canudos (BA): 3.901 famílias recebem o Bolsa Família. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
+| BF-ORIGEM | cidade | 2003 | O Bolsa Família, que hoje atende 3.901 famílias em Canudos, foi criado em 2003, no governo Lula. | Foi o Lula que fez. | 2003; set/2026 | [Planalto (MP 132/2003, convertida na Lei 10.836/2004); MDS](https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2004/lei/l10.836.htm) |
+| CISTERNAS | cidade | 1.380 | Canudos (BA): 1.380 cisternas foram entregues pelo programa federal de cisternas até abr/2026. | Conta pra quem ainda não sabe. | até abr/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
 
 **Bloqueados**
 
@@ -151,13 +122,8 @@ Os cards de estado e Brasil aparecem para todos os lugares e estão no fim.
 |---|---|---|---|---|---|---|
 | BF-HOJE | cidade | 80.592 | Porto Alegre (RS): 80.592 famílias recebem o Bolsa Família. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
 | BF-ORIGEM | cidade | 2003 | O Bolsa Família, que hoje atende 80.592 famílias em Porto Alegre, foi criado em 2003, no governo Lula. | Foi o Lula que fez. | 2003; set/2026 | [Planalto (MP 132/2003, convertida na Lei 10.836/2004); MDS](https://www.planalto.gov.br/ccivil_03/_ato2004-2006/2004/lei/l10.836.htm) |
-| BF-VALOR | cidade | R$ 53,2 milhões | Porto Alegre (RS): o Bolsa Família pagou R$ 53,2 milhões às famílias daqui em set/2026. | Com Lula, continua e cresce. | set/2026 | [MDS, MI Social](https://aplicacoes.mds.gov.br/sagi/vis/data3/data-explorer.php) |
-| PDM-HOJE | cidade | 14.661 | Porto Alegre (RS): estudantes daqui receberam 14.661 parcelas do Pé-de-Meia em jun/2026. | Foi o Lula que fez. | jun/2026 | [CGU, Portal da Transparência](https://portaldatransparencia.gov.br/download-de-dados/pe-de-meia) |
-| MM-HOJE | cidade | 119 | Porto Alegre (RS): 119 médicos do Mais Médicos atendem hoje. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Ministério da Saúde](https://apidadosabertos.saude.gov.br/v1/) |
-| MM-RETOMADA | cidade | 2023 | O Mais Médicos foi retomado em 2023, no governo Lula. Hoje são 119 médicos do programa em Porto Alegre. | Foi o Lula que trouxe de volta. | 09/10/2026 | [Planalto (Lei 14.621/2023); Ministério da Saúde, 09/10/2026](https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/l14621.htm) |
-| MM-3T | cidade | Dilma: 95 · Temer e Bolsonaro: 93 · Lula 3: 109 | Porto Alegre (RS): médicos do Mais Médicos em dezembro, média por governo. | Foi o Lula que trouxe de volta. | dez/2013 a 2026 | [Ministério da Saúde, série histórica do programa](https://apidadosabertos.saude.gov.br/v1/) |
 | POBREZA-MUN | cidade | 8,5% → 3,8% | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a parcela de pessoas pobres em Porto Alegre caiu de 8,5% para 3,8%. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
-| MORT-INF-MUN | cidade | 16,0 → 11,6 | Entre 2000 e 2010, década em que Lula governou de 2003 a 2010, a mortalidade até 1 ano de idade (por mil nascidos vivos, estimativa) em Porto Alegre caiu de 16,0 para 11,6. | Isso é o Brasil que dá certo. | 2000 e 2010 | [Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010](https://www.ipeadata.gov.br/) |
+| PDM-HOJE | cidade | 14.661 | Porto Alegre (RS): estudantes daqui receberam 14.661 parcelas do Pé-de-Meia em jun/2026. | Foi o Lula que fez. | jun/2026 | [CGU, Portal da Transparência](https://portaldatransparencia.gov.br/download-de-dados/pe-de-meia) |
 
 **Bloqueados**
 
@@ -215,10 +181,9 @@ Os cards de estado e Brasil aparecem para todos os lugares e estão no fim.
 
 | Motivo | Quantidade |
 |---|---:|
-| número pequeno | 30.785 |
+| número pequeno | 29.977 |
 | piora ou avanço pequeno | 9.525 |
 | contraste não verdadeiro | 5.570 |
-| série incompleta. contraste não verdadeiro ou número pequeno | 3.447 |
 | bairro sem correspondência segura entre 2000 e 2010 | 2.058 |
 | piora ou queda pequena | 390 |
 | fonte oficial não conferida neste ambiente (BCB/Fazenda) | 1 |
