@@ -243,8 +243,8 @@ if mmf.exists():
         dv = g[g.ano.between(2013, 2015)].ativos.mean()
         tb = g[g.ano.between(2016, 2022)].ativos.mean()
         l3 = g[g.ano >= 2023].ativos.mean()
-        if not (l3 > tb) or l3 < LIM["MM-3T"]["min"]:
-            bloq("MM-3T", "cidade", L, "contraste não verdadeiro ou número pequeno",
+        if pd.isna(dv) or pd.isna(tb) or pd.isna(l3) or not (l3 > tb) or l3 < LIM["MM-3T"]["min"]:
+            bloq("MM-3T", "cidade", L, "série incompleta, contraste não verdadeiro ou número pequeno",
                  {"dilma": round(dv, 1), "temer_bolsonaro": round(tb, 1), "lula3": round(l3, 1)}, i)
         else:
             add(i, {"modelo": "MM-3T", "tipo": 4, "cat": "comparacao", "nivel": "cidade", "lugar": L, "grande": "", "rotulo": "",
