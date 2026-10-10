@@ -1,16 +1,18 @@
-"""Gera os dados e a página da versão PÚBLICA (mobilização) a partir da mesma base da análise.
+"""Gera a versão PÚBLICA (militância) a partir da mesma base da análise.
 
-Entradas: data/municipios.json, data/meta.json, data/geo_municipios.json (saídas do 02_build.py)
-          + raw/ (TSE por zona e locais de votação) só para o detalhamento por zona/bairro.
-Saídas:   data_publico/publico.json e painel_publico/index.html (página única, dados embutidos).
+Entradas: data/municipios.json, data/meta.json, data/geo_municipios.json (02_build.py)
+          raw/derivados/locais.pkl (05_secoes.py) e raw/mds/bf_mensal.csv (06_bolsa_familia.py)
+Saídas:   painel_publico/index.html   página com o índice de cidades embutido
+          painel_publico/dados/<UF>.json (e <id>.json das maiores cidades), carregados sob demanda:
+          locais de votação, bairros, perfil da cidade e Bolsa Família
+          data_publico/checagem.json  números usados na conferência
 
-A versão pública NÃO carrega indicadores socioeconômicos, fórmulas nem termos técnicos.
-Uso: python scripts/04_publico.py   (rodar depois do 02_build.py)
+A versão pública não traz religião, raça/cor, fórmulas nem termos técnicos.
+Uso: python scripts/04_publico.py
 """
 import json
 import re
 import unicodedata
-import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -19,16 +21,19 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "raw"
 DATA = ROOT / "data"
-OUT = ROOT / "data_publico"
-OUT.mkdir(exist_ok=True)
+PUB = ROOT / "painel_publico"
+DADOS = PUB / "dados"
+OUTD = ROOT / "data_publico"
+for d in (DADOS, OUTD):
+    d.mkdir(parents=True, exist_ok=True)
 
-# Segmento da análise -> ação da versão pública (os demais segmentos não aparecem com nome)
+# ---------------------------------------------------------------- parâmetros
 ACAO = {"mobilizacao": 1, "reconquista": 2, "disputa": 3}  # 1 levar p/ votar, 2 conversar, 3 bairro a bairro
-CAPITAIS = {"1100205", "1200401", "1302603", "1400100", "1501402", "1600303", "1721000", "2111300", "2211001",
-            "2304400", "2408102", "2507507", "2611606", "2704302", "2800308", "2927408", "3106200", "3205309",
-            "3304557", "3550308", "4106902", "4205407", "4314902", "5002704", "5103403", "5208707", "5300108"}
-ZONAS_POR_CIDADE = 8   # zonas exibidas por cidade (as de mais votos em jogo)
-BAIRROS_POR_ZONA = 4
+CIDADE_GRANDE = 200_000     # eleitores: acima disso, a página agrupa os locais por bairro
+AMOSTRA_PEQUENA = 300       # locais com menos eleitores: sem percentuais nem ação
+ARQ_PROPRIO = 1000          # cidades com mais locais que isso ganham arquivo próprio
+PORTES = [10_000, 50_000, 200_000, 1_000_000]  # limites das faixas de porte (eleitores 1T26)
+REG = {"reduto": 55.0, "adverso": 45.0, "queda": -7.0, "abst_alta": 25.0, "abst_cresc": 2.0}  # mesmas regras da análise
 
 
 def tab(path):
@@ -39,114 +44,234 @@ def tab(path):
 mun = tab(DATA / "municipios.json")
 meta = json.loads((DATA / "meta.json").read_text())
 geo = json.loads((DATA / "geo_municipios.json").read_text())
+ibge_nome = {str(m["id"]): m["nome"] for m in json.loads((RAW / "ibge" / "municipios.json").read_text())}
+cm = json.loads((RAW / "tse_resultados" / "mun-cm.json").read_text())
+tse2ibge = {m["cd"]: m["cdi"] for a in cm["abr"] for m in a["mu"] if m.get("cdi")}
+AMC = {m: meta["amc"]["membros"][0] for m in meta["amc"]["membros"][1:]}
 
-# ---------------------------------------------------------------- centro aproximado de cada município (lon/lat)
+MINUSC = {"de", "da", "do", "das", "dos", "e", "a", "o"}
+SIGLAS = {"ee", "emef", "emei", "cei", "ceu", "ufba", "ufpe", "ufrj", "usp", "unb", "senai", "sesi", "senac", "sesc",
+          "cmei", "ciep", "caic", "ifba", "ifsp", "eeef", "emeif", "eef", "eem", "eeefm", "ii", "iii", "iv", "jk"}
+
+
+def titulo(s):
+    if not isinstance(s, str) or not s.strip():
+        return ""
+    s = re.sub(r"\b([a-z]{1,5})\.(?=[a-z])", r"\1. ", s.strip().lower())  # "ee.carlos" -> "ee. carlos"
+    w = re.sub(r"\s+", " ", s).split(" ")
+    out = []
+    for k, x in enumerate(w):
+        if x.strip(".-") in SIGLAS:
+            out.append(x.upper())
+        elif x in MINUSC and k:
+            out.append(x)
+        else:
+            out.append(x[:1].upper() + x[1:])
+    return " ".join(out)
+
+
+def porte(a):
+    return int(np.searchsorted(PORTES, a, side="right"))
+
+
+# ---------------------------------------------------------------- locais de votação
+L = pd.read_pickle(RAW / "derivados" / "locais.pkl")
+L["id"] = L.CD_MUNICIPIO.map(tse2ibge).map(lambda i: AMC.get(i, i))
+assert L.id.notna().all()
+L = L.merge(mun[["id", "abs_hist"]], on="id", how="left")
+num = ["aptos_26", "abst_26", "lula_26", "adv_26", "outros_26", "bn_26", "aptos_22", "abst_22", "lula_22", "adv_22",
+       "aptos_h", "abst_h"]
+L[num] = L[num].astype(float)
+# 2022 só entra quando o local é comparável
+for c in ["aptos_22", "abst_22", "lula_22", "adv_22", "aptos_h", "abst_h"]:
+    L.loc[~L.comparavel, c] = np.nan
+
+
+def metricas(d, abs_hist_padrao):
+    v26 = d.lula_26 + d.adv_26 + d.outros_26
+    d["pv22"] = 100 * d.lula_22 / (d.lula_22 + d.adv_22)
+    d["pv26"] = 100 * d.lula_26 / v26
+    d["pen22"] = 100 * d.lula_22 / d.aptos_22
+    d["pen26c"] = 100 * d.lula_26c / d.aptos_26c
+    d["dpen"] = d.pen26c - d.pen22
+    d["abs26"] = 100 * d.abst_26 / d.aptos_26
+    hist = 100 * d.abst_h / d.aptos_h
+    d["abs_h"] = hist.where(hist.notna(), abs_hist_padrao)
+    d["exc"] = ((d.abs26 - d.abs_h).clip(lower=0) / 100 * d.aptos_26).fillna(0)
+    d["jogo"] = d.outros_26 + d.bn_26 + d.exc
+    d["pot"] = (-d.dpen).clip(lower=0).fillna(0) / 100 * d.aptos_26 + d.exc * d.pv22.fillna(d.pv26) / 100
+    red = d.pv22 >= REG["reduto"]
+    d["acao"] = np.select(
+        [red & (d.dpen <= REG["queda"]),
+         red & ((d.abs26 >= REG["abst_alta"]) | (d.abs26 - d.abs_h >= REG["abst_cresc"])),
+         (d.pv22 >= REG["adverso"]) & (d.pv22 < REG["reduto"])], [2, 1, 3], 0)
+    d.loc[d.pv22.isna() | (d.aptos_26 < AMOSTRA_PEQUENA), "acao"] = 0
+    return d
+
+
+# variáveis "c" = 1T26 só nos locais comparáveis (para a variação usar a mesma base)
+L["lula_26c"] = L.lula_26.where(L.comparavel)
+L["aptos_26c"] = L.aptos_26.where(L.comparavel)
+L = metricas(L, L.abs_hist)
+L["bairro"] = L.NM_BAIRRO.map(titulo)
+L["nome"] = L.NM_LOCAL_VOTACAO.map(titulo)
+L["end"] = L.DS_ENDERECO.map(titulo)
+L.loc[L.nome == "", "nome"] = "Local " + L.NR_LOCAL_VOTACAO.astype(str) + " (zona " + L.NR_ZONA.astype(str) + ")"
+
+# conferência: soma dos locais = município da análise
+chk = L.groupby("id")[["aptos_26", "lula_26", "adv_26"]].sum().join(mun.set_index("id")[["aptos_26", "lula_26", "adv_26"]], rsuffix="_a")
+dif = chk[(chk.aptos_26 != chk.aptos_26_a) | (chk.lula_26 != chk.lula_26_a) | (chk.adv_26 != chk.adv_26_a)]
+assert dif.empty, f"Locais não somam o município em {len(dif)} cidades:\n{dif.head()}"
+print(f"✓ soma dos locais = município em todas as {len(chk)} cidades (aptos, Lula e adversário 1T26)")
+
+# ---------------------------------------------------------------- Bolsa Família
+bf = pd.read_csv(RAW / "mds" / "bf_mensal.csv", dtype={"codigo_ibge": str, "anomes_s": str})
+cod7 = {k[:6]: k for k in ibge_nome}
+bf["id"] = bf.codigo_ibge.map(cod7).map(lambda i: AMC.get(i, i))
+ULT = bf.anomes_s.max()
+PRI = bf.anomes_s.min()
+bf_ult = bf[bf.anomes_s == ULT].groupby("id")[["qtd_familias_beneficiarias_bolsa_familia_i",
+                                                 "qtd_pessoas_beneficiarias_bolsa_familia_i",
+                                                 "valor_repassado_bolsa_familia_f"]].sum()
+bf_acum = bf.groupby("id").valor_repassado_bolsa_familia_f.sum()
+
+# ---------------------------------------------------------------- perfil da cidade (sem religião e sem raça/cor)
+PERFIL = ["pop", "renda_media", "pbf_pop", "urbana", "el_jov", "el_ido", "el_baixa", "el_sup"]
+media_uf = {}
+for uf, g in mun.groupby("uf"):
+    w = g["pop"]
+    we = g.aptos_26
+    media_uf[uf] = {
+        "renda_media": round(float(np.average(g.renda_media, weights=w)), 0),
+        "pbf_pop": round(float(np.average(g.pbf_pop, weights=w)), 1),
+        "urbana": round(float(np.average(g.urbana, weights=w)), 1),
+        "el_jov": round(float(np.average(g.el_jov, weights=we)), 1),
+        "el_ido": round(float(np.average(g.el_ido, weights=we)), 1),
+        "el_baixa": round(float(np.average(g.el_baixa, weights=we)), 1),
+        "el_sup": round(float(np.average(g.el_sup, weights=we)), 1),
+    }
+
+
+def r1(v):
+    return None if v is None or (isinstance(v, float) and not np.isfinite(v)) else round(float(v), 1)
+
+
+def r10(v):  # percentual * 10, inteiro (economiza bytes); -1 = sem dado
+    return -1 if v is None or not np.isfinite(v) else int(round(v * 10))
+
+
+# ---------------------------------------------------------------- arquivos sob demanda
+nloc = L.groupby("id").size()
+arquivo = {i: (i if nloc.get(i, 0) > ARQ_PROPRIO else uf) for i, uf in zip(mun.id, mun.uf)}
+pacotes = {}
+SOMA = ["aptos_26", "abst_26", "lula_26", "adv_26", "outros_26", "bn_26", "aptos_22", "abst_22", "lula_22", "adv_22",
+        "aptos_h", "abst_h", "lula_26c", "aptos_26c"]
+mun_i = mun.set_index("id")
+checagem = {}
+for i, g in L.groupby("id"):
+    m = mun_i.loc[i]
+    g = g.sort_values("pot", ascending=False)
+    grande = m.aptos_26 >= CIDADE_GRANDE
+    bairros = []
+    bidx = {}
+    if grande:
+        b = g.groupby("bairro")[SOMA].sum(min_count=1)
+        b = metricas(b, m.abs_hist).sort_values("pot", ascending=False)
+        for k, (nome, r) in enumerate(b.iterrows()):
+            bidx[nome] = k
+            bairros.append([nome or "Sem bairro", int(g[g.bairro == nome].shape[0]), int(r.aptos_26), r10(r.pv22),
+                            r10(r.pv26), r10(r.abs26), int(round(r.jogo)), int(r.acao)])
+    locais = []
+    for r in g.itertuples():
+        peq = r.aptos_26 < AMOSTRA_PEQUENA
+        novo = not r.comparavel
+        locais.append([r.nome, r.end, bidx.get(r.bairro, r.bairro) if grande else r.bairro, int(r.aptos_26),
+                       -1 if peq else r10(r.pv22), -1 if peq else r10(r.pv26), -1 if peq else r10(r.abs26),
+                       int(round(r.jogo)), int(r.acao), (1 if peq else 0) | (2 if novo else 0)])
+    fam = bf_ult.loc[i] if i in bf_ult.index else None
+    perfil = {k: r1(m[k]) for k in PERFIL}
+    perfil["pop"] = int(m["pop"]) if np.isfinite(m["pop"]) else None
+    perfil["renda_media"] = int(round(m.renda_media)) if np.isfinite(m.renda_media) else None
+    pac = {"perfil": perfil,
+           "bf": None if fam is None else {
+               "familias": int(fam.qtd_familias_beneficiarias_bolsa_familia_i),
+               "pessoas": int(fam.qtd_pessoas_beneficiarias_bolsa_familia_i),
+               "valor_mes": float(fam.valor_repassado_bolsa_familia_f),
+               "valor_acum": float(bf_acum.loc[i])},
+           "grande": bool(grande), "bairros": bairros, "locais": locais}
+    pacotes.setdefault(arquivo[i], {})[i] = pac
+    checagem[i] = {"locais": g.head(2)[["NR_ZONA", "NR_LOCAL_VOTACAO", "nome", "aptos_26", "abst_26", "lula_26",
+                                        "adv_26", "lula_22", "adv_22"]].to_dict(orient="records"),
+                   "bf": pac["bf"]}
+
+# divide UFs grandes em partes de até ~MAX_ARQ bytes (carregamento rápido no 4G)
+MAX_ARQ = 500_000
+for k in [k for k in list(pacotes) if not k.isdigit()]:
+    tam = {i: len(json.dumps(v, ensure_ascii=False, separators=(",", ":")).encode()) for i, v in pacotes[k].items()}
+    if sum(tam.values()) <= MAX_ARQ:
+        continue
+    partes, atual, soma = [], {}, 0
+    for i in sorted(pacotes[k]):
+        if atual and soma + tam[i] > MAX_ARQ:
+            partes.append(atual)
+            atual, soma = {}, 0
+        atual[i] = pacotes[k][i]
+        soma += tam[i]
+    partes.append(atual)
+    del pacotes[k]
+    for n, parte in enumerate(partes, 1):
+        pacotes[f"{k}-{n}"] = parte
+        for i in parte:
+            arquivo[i] = f"{k}-{n}"
+
+for f in DADOS.glob("*.json"):
+    f.unlink()
+tamanhos = {}
+for k, v in pacotes.items():
+    p = DADOS / f"{k}.json"
+    p.write_text(json.dumps(v, ensure_ascii=False, separators=(",", ":")))
+    tamanhos[k] = p.stat().st_size
+(OUTD / "checagem.json").write_text(json.dumps(checagem, ensure_ascii=False, default=float))
+
+# ---------------------------------------------------------------- índice (embutido na página)
 cent = {}
 for f in geo["features"]:
     i = f["properties"]["id"]
     polys = f["geometry"]["coordinates"] if f["geometry"]["type"] == "MultiPolygon" else [f["geometry"]["coordinates"]]
     ring = max((p[0] for p in polys), key=len)
     xs, ys = [c[0] for c in ring], [c[1] for c in ring]
-    if i not in cent:  # AMC: fica o primeiro polígono (Sorriso)
-        cent[i] = (round((min(xs) + max(xs)) / 2, 2), round((min(ys) + max(ys)) / 2, 2))
+    cent.setdefault(i, (round((min(xs) + max(xs)) / 2, 2), round((min(ys) + max(ys)) / 2, 2)))
 
-# ---------------------------------------------------------------- zonas (cidades-alvo com mais de uma zona)
-cm = json.loads((RAW / "tse_resultados" / "mun-cm.json").read_text())
-tse2ibge = {m["cd"]: m["cdi"] for a in cm["abr"] for m in a["mu"] if m.get("cdi")}
-alvo = set(mun[(mun.seg == "disputa") | mun.id.isin(CAPITAIS)].id)
-alvo_tse = {t for t, i in tse2ibge.items() if i in alvo}
-
-
-def det(ano):
-    d = pd.read_csv(RAW / "tse" / f"detalhe_votacao_munzona_{ano}_BR.csv", sep=";", encoding="latin1",
-                    dtype={"CD_MUNICIPIO": str})
-    d["CD_MUNICIPIO"] = d.CD_MUNICIPIO.str.zfill(5)
-    d = d[d.CD_MUNICIPIO.isin(alvo_tse)]
-    d["bn"] = d.QT_VOTOS_BRANCOS + d.QT_TOTAL_VOTOS_NULOS
-    return d.groupby(["NR_TURNO", "CD_MUNICIPIO", "NR_ZONA"])[["QT_APTOS", "QT_ABSTENCOES", "bn"]].sum()
-
-
-d22, d26 = det(2022), det(2026)
-c26 = pd.read_csv(RAW / "tse" / "votacao_candidato_munzona_2026_BR.csv", sep=";", encoding="latin1",
-                  dtype={"CD_MUNICIPIO": str}, usecols=["CD_MUNICIPIO", "NR_ZONA", "NR_CANDIDATO", "QT_VOTOS_NOMINAIS_VALIDOS"])
-c26["CD_MUNICIPIO"] = c26.CD_MUNICIPIO.str.zfill(5)
-c26 = c26[c26.CD_MUNICIPIO.isin(alvo_tse) & ~c26.NR_CANDIDATO.isin([13, 22])]
-outros = c26.groupby(["CD_MUNICIPIO", "NR_ZONA"]).QT_VOTOS_NOMINAIS_VALIDOS.sum()
-
-z = d26.loc[1].copy()
-z["outros"] = outros.reindex(z.index).fillna(0)
-h = d22.loc[1].add(d22.loc[2], fill_value=0)
-z = z.join(h.rename(columns={"QT_APTOS": "aptos_h", "QT_ABSTENCOES": "abst_h"})[["aptos_h", "abst_h"]], how="left")
-z = z.reset_index()
-z["id"] = z.CD_MUNICIPIO.map(tse2ibge)
-abs_hist_mun = mun.set_index("id").abs_hist
-# zona nova (sem 2022): usa a abstenção histórica do município
-z["abs_h"] = np.where(z.aptos_h > 0, 100 * z.abst_h / z.aptos_h, z.id.map(abs_hist_mun))
-z["abs26"] = 100 * z.QT_ABSTENCOES / z.QT_APTOS
-z["exc"] = (z.abs26 - z.abs_h).clip(lower=0) / 100 * z.QT_APTOS
-z["jogo"] = z.outros + z.bn + z.exc
-nz = z.groupby("id").NR_ZONA.transform("count")
-z = z[nz > 1]
-
-# bairros de cada zona (locais de votação 2026, ponderados pelo eleitorado das seções)
-loc = []
-with zipfile.ZipFile(RAW / "tse" / "eleitorado_local_votacao_2026.zip") as zf:
-    for n in zf.namelist():
-        if n.endswith(".csv") and "BRASIL" not in n:
-            d = pd.read_csv(zf.open(n), sep=";", encoding="latin1", dtype={"CD_MUNICIPIO": str},
-                            usecols=["NR_TURNO", "CD_MUNICIPIO", "NR_ZONA", "NM_BAIRRO", "QT_ELEITOR_SECAO"])
-            d["CD_MUNICIPIO"] = d.CD_MUNICIPIO.str.zfill(5)
-            loc.append(d[(d.NR_TURNO == 1) & d.CD_MUNICIPIO.isin(alvo_tse)])
-loc = pd.concat(loc)
-loc["bairro"] = loc.NM_BAIRRO.fillna("").str.strip()
-loc = loc[~loc.bairro.isin(["", "-", "#NULO", "NAO INFORMADO", "NÃO INFORMADO"])]
-bz = loc.groupby(["CD_MUNICIPIO", "NR_ZONA", "bairro"]).QT_ELEITOR_SECAO.sum().reset_index()
-
-MINUSC = {"de", "da", "do", "das", "dos", "e"}
-
-
-def titulo(s):
-    w = re.sub(r"\s+", " ", s.lower()).split(" ")
-    return " ".join(x if (x in MINUSC and k) else x[:1].upper() + x[1:] for k, x in enumerate(w))
-
-
-bairros = {}
-for (m, zn), g in bz.groupby(["CD_MUNICIPIO", "NR_ZONA"]):
-    bairros[(m, zn)] = [titulo(b) for b in g.sort_values("QT_ELEITOR_SECAO", ascending=False).bairro.head(BAIRROS_POR_ZONA)]
-
-zonas = {}
-for i, g in z.sort_values("jogo", ascending=False).groupby("id", sort=False):
-    zonas[i] = [[int(r.NR_ZONA), int(round(r.jogo)), bairros.get((r.CD_MUNICIPIO, r.NR_ZONA), [])]
-                for r in g.head(ZONAS_POR_CIDADE).itertuples()]
-
-# ---------------------------------------------------------------- cidades
-AMC_MEMBROS = meta["amc"]["membros"]
-ibge_nome = {str(m["id"]): m["nome"] for m in json.loads((RAW / "ibge" / "municipios.json").read_text())}
-cid = []
+idx = []
 for r in mun.itertuples():
     lon, lat = cent.get(r.id, (None, None))
-    cid.append([r.id, r.nome, r.uf, ACAO.get(r.seg, 0), int(round(r.estoque)), lon, lat])
-    if r.id == AMC_MEMBROS[0]:  # municípios somados na área comparável: busca encontra cada nome
-        for alias in AMC_MEMBROS[1:]:
-            cid.append([r.id, ibge_nome[alias], r.uf, ACAO.get(r.seg, 0), int(round(r.estoque)), lon, lat])
-cid.sort(key=lambda x: unicodedata.normalize("NFKD", x[1]).encode("ascii", "ignore").decode().lower())
+    row = [r.id, r.nome, r.uf, ACAO.get(r.seg, 0), int(round(r.estoque)), lon, lat, porte(r.aptos_26),
+           r10(r.pv_l22), r10(r.pv_l26), int(r.d_lula), arquivo[r.id] if arquivo[r.id] != r.uf else 0]
+    idx.append(row)
+    if r.id in AMC.values():
+        for alias, dest in AMC.items():
+            if dest == r.id:
+                idx.append([r.id, ibge_nome[alias]] + row[2:])
+idx.sort(key=lambda x: unicodedata.normalize("NFKD", x[1]).encode("ascii", "ignore").decode().lower())
 
+# destaque: cidades pequenas (até 50 mil eleitores)
+peq = mun.aptos_26 < 50_000
+tot = mun.d_saldo.sum()
 B = meta["brasil"]
 pub = {
-    "deficit": int(B["deficit"]),
-    "jogo": int(meta["brasil_sem_exterior"]["estoque"]),
-    "gerado_1t26": meta["fontes"][1]["gerado"],
-    "extracao": meta["data_extracao"],
-    "cidades": cid,
-    "zonas": zonas,
+    "deficit": int(B["deficit"]), "jogo": int(meta["brasil_sem_exterior"]["estoque"]),
+    "pequenas": {"n": int(peq.sum()), "saldo": int(mun[peq].d_saldo.sum()), "saldo_total": int(tot),
+                 "parte": round(100 * mun[peq].d_saldo.sum() / tot), "pv22": r1(100 * mun[peq].lula_22.sum() / mun[peq].validos_22.sum()),
+                 "pv26": r1(100 * mun[peq].lula_26.sum() / mun[peq].validos_26.sum())},
+    "gerado_1t26": meta["fontes"][1]["gerado"], "extracao": meta["data_extracao"],
+    "bf_periodo": [PRI, ULT], "media_uf": media_uf, "portes": PORTES,
+    "cidades": idx,
 }
-(OUT / "publico.json").write_text(json.dumps(pub, ensure_ascii=False, separators=(",", ":")))
+tpl = (PUB / "template.html").read_text()
+html = tpl.replace("/*__DADOS__*/null", json.dumps(pub, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/"))
+(PUB / "index.html").write_text(html)
 
-tpl = (ROOT / "painel_publico" / "template.html").read_text()
-payload = json.dumps(pub, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
-html = tpl.replace("/*__DADOS__*/null", payload)
-(ROOT / "painel_publico" / "index.html").write_text(html)
-
-n_acao = pd.Series([c[3] for c in cid]).value_counts().to_dict()
-print(f"cidades {len(cid)} | por ação {n_acao} | cidades com zonas {len(zonas)} ({sum(map(len, zonas.values()))} zonas)")
-print(f"publico.json {(OUT / 'publico.json').stat().st_size / 1e3:.0f} KB | index.html {len(html.encode()) / 1e3:.0f} KB")
+print(f"index.html {len(html.encode()) / 1e3:.0f} KB | arquivos sob demanda: {len(tamanhos)}, "
+      f"total {sum(tamanhos.values()) / 1e6:.1f} MB, maior {max(tamanhos, key=tamanhos.get)} {max(tamanhos.values()) / 1e3:.0f} KB")
+print("pequenas:", pub["pequenas"], "| BF", PRI, "→", ULT)
+print("locais por ação:", L.acao.value_counts().to_dict())

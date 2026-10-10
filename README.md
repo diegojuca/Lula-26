@@ -128,32 +128,60 @@ Domínios bloqueados neste ambiente, nenhum deles necessário: `aplicacoes.cidad
 
 ---
 
-# Versão pública — "Onde seu voto vira mais votos"
+# Versão pública v2 — "Vamos virar juntos / Onde seu voto vira mais votos"
 
-Segundo produto do mesmo pipeline, voltado à militância. Responde: *onde meu esforço vira mais votos no 2º turno, e o que eu faço lá?*
+Material de apoio da militância: **não é material oficial da campanha**. O mesmo pipeline gera dois produtos, e a versão de análise não muda.
 
-- Gerada por `python scripts/04_publico.py` (depois do `02_build.py`), a partir de `data/*.json` e, para o detalhe por zona, de `raw/`.
-- Saídas: `data_publico/publico.json` e `painel_publico/index.html`, uma página única com os dados embutidos (~330 KB, sem mapa e sem dependências externas).
-- O texto é editado em `painel_publico/template.html`. A marca (nome, logo, cor e título) fica configurável num único ponto: o objeto `MARCA` no topo do script da página.
+**Antes de compartilhar o link**: preencha `MARCA.responsavel` em `painel_publico/template.html` e rode `python scripts/04_publico.py` (propaganda anônima na internet é vedada).
 
-| Ação (página pública) | Origem (análise) | Cidades |
-|---|---|---:|
-| Levar para votar | mobilização | 295 |
-| Conversar com quem mudou | reconquista | 677 |
-| Disputar bairro a bairro | disputa | 106 |
-| Fora das prioritárias (mensagem neutra e 3 prioritárias próximas com ≥ 5 mil votos em jogo) | consolidado, equilíbrio, adverso | 4.493 |
+## Como gerar
+```bash
+python scripts/05_secoes.py         # votação de presidente por local (TSE, ~850 MB de download, ~2 min)
+python scripts/06_bolsa_familia.py  # Bolsa Família mês a mês por município (MDS MI Social, 03/2023 até o último mês)
+python scripts/04_publico.py        # página + arquivos sob demanda; confere a soma dos locais com a análise
+```
 
-- **"Votos em jogo"** = o mesmo "estoque" da análise (terceiros + brancos/nulos + abstenção acima da histórica), exibido com 2 algarismos significativos.
-- **Zonas e bairros**: aparecem em 69 cidades-alvo com mais de uma zona eleitoral (as do segmento disputa e as capitais), até 8 zonas por cidade, ordenadas por votos em jogo. Os bairros são os 4 com mais eleitores entre os locais de votação de cada zona (`eleitorado_local_votacao_2026`). Zona nova, sem dado de 2022, usa a abstenção histórica do município.
-- A página **não** mostra recortes socioeconômicos, fórmulas, termos técnicos nem dado de pessoa.
-- **Fica para a fase 2**: o ranking de bairros por seção eleitoral, que exige `votacao_secao` de 2022 e 2026 (~8 GB) e cobriria também as cidades de uma zona só.
+## O que a página mostra
+- **Cidade**: ação (Levar para votar / Conversar com quem mudou / Disputar bairro a bairro, as mesmas regras de segmento da análise), votos em jogo e Lula % válidos 2T22 → 1T26.
+- **Onde agir**: todos os locais de votação, ordenados por prioridade (votos de penetração perdidos + abstenção excedente × % de Lula, a mesma fórmula do "potencial" da análise), com nome, endereço, bairro, variação de Lula, abstenção e votos em jogo. A ação do local usa as mesmas regras, aplicadas ao local.
+  - Cidades com **200 mil eleitores ou mais**: primeiro os bairros (agregando os locais), depois os locais de cada bairro.
+  - Locais com **menos de 300 eleitores**: "amostra pequena", sem percentuais e sem ação.
+  - Locais sem correspondente comparável em 2022 (número diferente, ou eleitorado que mudou mais que 0,5x–2x): "local novo", só com 1T26.
+- **A cidade**: população, renda média por pessoa, % da população no Bolsa Família, % urbana, faixas etárias e escolaridade do eleitorado, cada um comparado com a média do estado (diferença menor que 5% conta como "na média"). Sem religião e sem raça/cor.
+- **Governo federal**: só o Bolsa Família (MDS), com famílias, pessoas, valor pago no mês e valor pago acumulado desde 03/2023. Valores em reais aparecem truncados.
+- **"Nas cidades pequenas, o voto mudou de lado"**: as cidades com até 50 mil eleitores concentram 71% da piora do saldo de Lula sobre o adversário (−3,1 mi de −4,4 mi). A lista "Onde mais conta" tem filtro por porte; no filtro "Pequenas", ordena por votos perdidos.
 
-Checagem com a versão de análise (mesma base):
+## Tamanho
+- `painel_publico/index.html`: 440 KB (163 KB comprimido), com o índice de cidades embutido.
+- `painel_publico/dados/*.json`: 40 arquivos carregados quando a pessoa escolhe a cidade, cada um com até ~500 KB (≤ ~165 KB comprimido). São um por UF, UFs grandes divididas em partes, e São Paulo e Rio capitais em arquivo próprio. Total de 11,9 MB.
 
-| Cidade | Segmento (análise) | Estoque (análise) | Ação (pública) | Votos em jogo (pública) | OK |
-|---|---|---:|---|---:|:-:|
-| São Paulo (SP) | disputa | 1.404.211 | Disputar bairro a bairro | 1.404.211 | ✓ |
-| Salvador (BA) | mobilização | 287.690 | Levar para votar | 287.690 | ✓ |
-| Feira de Santana (BA) | reconquista | 57.013 | Conversar com quem mudou | 57.013 | ✓ |
-| Campinas (SP) | adverso | 113.293 | fora das prioritárias | 113.293 | ✓ |
-| Ilhéus (BA) | consolidado | 13.895 | fora das prioritárias | 13.895 | ✓ |
+## Ficou de fora
+- **Outros programas federais** (Pé-de-Meia, Farmácia Popular, Mais Médicos, MCMV, Novo PAC, Luz para Todos, Auxílio Gás, transferências): os domínios oficiais estão bloqueados neste ambiente. Liberar `dadosabertos.mec.gov.br`, `apidadosabertos.saude.gov.br`, `opendatasus.saude.gov.br`, `dados.cidades.gov.br`, `novopac.casacivil.gov.br`, `www.gov.br`, `portaldatransparencia.gov.br` e `www.tesourotransparente.gov.br`.
+- **BPC**: o MI Social mostra o mesmo número em todos os meses, então não é confiável.
+- **Perfil por bairro**: exigiria cruzar os locais com os setores censitários do Censo 2022.
+
+## Conferências
+Soma dos locais = município da análise (aptos, Lula e adversário 1T26) **em todas as 5.569 cidades** (verificação automática no `04_publico.py`).
+
+Locais de votação, recalculados direto dos arquivos brutos do TSE por seção:
+
+| Cidade | Local | Aptos 1T26 | Lula 2T22 | Lula 1T26 | Lula % válidos | Abstenção | OK |
+|---|---|---:|---:|---:|---|---:|:-:|
+| São Paulo (SP) | EE. Washington Alves Natel | 9.840 | 4.948 | 3.996 | 68,1% → 58,6% | 25,0% | ✓ |
+| São Paulo (SP) | Amelia Kerr Nogueira Profa - EE | 9.327 | 5.680 | 4.121 | 73,0% → 64,6% | 25,8% | ✓ |
+| Salvador (BA) | Colégio Rotary | 14.943 | 10.248 | 7.250 | 74,3% → 68,6% | 24,4% | ✓ |
+| Salvador (BA) | Centro Educacional Nossa Senhora do Resgate | 3.760 | 3.458 | 1.708 | 64,8% → 57,8% | 18,0% | ✓ |
+| Feira de Santana (BA) | Escola Estadual Carolina Maria de Jesus | 7.440 | 3.639 | 3.250 | 66,5% → 58,5% | 19,2% | ✓ |
+| Feira de Santana (BA) | Colégio Estadual Edith Machado Boaventura | 8.087 | 4.300 | 3.856 | 70,2% → 62,6% | 18,8% | ✓ |
+| Itabuna (BA) | Grupo Escolar Mun. Prof. Everaldo Cardoso | 3.550 | 1.490 | 1.354 | 58,0% → 56,0% | 25,2% | ✓ |
+| Itabuna (BA) | Colégio Batista de Itabuna | 5.195 | 2.246 | 2.007 | 53,3% → 48,8% | 17,8% | ✓ |
+| Boa Esperança do Sul (SP) | EE. Coronel Marcelino Braga | 3.293 | 1.418 | 977 | 55,4% → 41,1% | 22,8% | ✓ |
+| Boa Esperança do Sul (SP) | EMEF. Anna Maria Mazzali | 2.989 | 1.417 | 976 | 59,6% → 45,0% | 20,8% | ✓ |
+
+Bolsa Família, consultado de novo no MI Social (MDS):
+
+| Item | Página | Fonte | OK |
+|---|---:|---:|:-:|
+| Itabuna: famílias, set/2026 | 22.171 | 22.171 | ✓ |
+| Salvador: valor pago, set/2026 | R$ 190.400.528 | R$ 190.400.528 | ✓ |
+| São Paulo: valor pago, mar/2023–set/2026 (43 meses) | R$ 19.576.961.312 | R$ 19.576.961.312 | ✓ |
