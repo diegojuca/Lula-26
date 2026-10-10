@@ -135,6 +135,12 @@ bf_ult = bf[bf.anomes_s == ULT].groupby("id")[["qtd_familias_beneficiarias_bolsa
                                                  "valor_repassado_bolsa_familia_f"]].sum()
 bf_acum = bf.groupby("id").valor_repassado_bolsa_familia_f.sum()
 
+# Pé-de-Meia e Mais Médicos (07_federal.py)
+fed = pd.read_csv(RAW / "federal" / "federal_municipios.csv", dtype={"ibge": str})
+fed["id"] = fed.ibge.map(lambda i: AMC.get(i, i))
+fed = fed.groupby("id")[["pdm_parcelas", "pdm_valor", "mm_medicos"]].sum(min_count=1)
+fed_meta = json.loads((RAW / "federal" / "federal_meta.json").read_text())
+
 # ---------------------------------------------------------------- perfil da cidade (sem religião e sem raça/cor)
 PERFIL = ["pop", "renda_media", "pbf_pop", "urbana", "el_jov", "el_ido", "el_baixa", "el_sup"]
 media_uf = {}
@@ -198,11 +204,15 @@ for i, g in L.groupby("id"):
                "pessoas": int(fam.qtd_pessoas_beneficiarias_bolsa_familia_i),
                "valor_mes": float(fam.valor_repassado_bolsa_familia_f),
                "valor_acum": float(bf_acum.loc[i])},
+           "fed": None if i not in fed.index else {
+               "pdm_parcelas": None if pd.isna(fed.loc[i, "pdm_parcelas"]) else int(fed.loc[i, "pdm_parcelas"]),
+               "pdm_valor": None if pd.isna(fed.loc[i, "pdm_valor"]) else float(fed.loc[i, "pdm_valor"]),
+               "mm_medicos": None if pd.isna(fed.loc[i, "mm_medicos"]) else int(fed.loc[i, "mm_medicos"])},
            "grande": bool(grande), "bairros": bairros, "locais": locais}
     pacotes.setdefault(arquivo[i], {})[i] = pac
     checagem[i] = {"locais": g.head(2)[["NR_ZONA", "NR_LOCAL_VOTACAO", "nome", "aptos_26", "abst_26", "lula_26",
                                         "adv_26", "lula_22", "adv_22"]].to_dict(orient="records"),
-                   "bf": pac["bf"]}
+                   "bf": pac["bf"], "fed": pac["fed"]}
 
 # divide UFs grandes em partes de até ~MAX_ARQ bytes (carregamento rápido no 4G)
 MAX_ARQ = 500_000
@@ -264,7 +274,7 @@ pub = {
                  "parte": round(100 * mun[peq].d_saldo.sum() / tot), "pv22": r1(100 * mun[peq].lula_22.sum() / mun[peq].validos_22.sum()),
                  "pv26": r1(100 * mun[peq].lula_26.sum() / mun[peq].validos_26.sum())},
     "gerado_1t26": meta["fontes"][1]["gerado"], "extracao": meta["data_extracao"],
-    "bf_periodo": [PRI, ULT], "media_uf": media_uf, "portes": PORTES,
+    "bf_periodo": [PRI, ULT], "pdm_mes": fed_meta["pdm_mes"], "mm_ref": fed_meta["mm_referencia"], "media_uf": media_uf, "portes": PORTES,
     "cidades": idx,
 }
 tpl = (PUB / "template.html").read_text()

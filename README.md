@@ -138,6 +138,7 @@ Material de apoio da militância: **não é material oficial da campanha**. O me
 ```bash
 python scripts/05_secoes.py         # votação de presidente por local (TSE, ~850 MB de download, ~2 min)
 python scripts/06_bolsa_familia.py  # Bolsa Família mês a mês por município (MDS MI Social, 03/2023 até o último mês)
+python scripts/07_federal.py        # Pé-de-Meia (CGU, último mês) e Mais Médicos (Saúde) por município
 python scripts/04_publico.py        # página + arquivos sob demanda; confere a soma dos locais com a análise
 ```
 
@@ -148,7 +149,10 @@ python scripts/04_publico.py        # página + arquivos sob demanda; confere a 
   - Locais com **menos de 300 eleitores**: "amostra pequena", sem percentuais e sem ação.
   - Locais sem correspondente comparável em 2022 (número diferente, ou eleitorado que mudou mais que 0,5x–2x): "local novo", só com 1T26.
 - **A cidade**: população, renda média por pessoa, % da população no Bolsa Família, % urbana, faixas etárias e escolaridade do eleitorado, cada um comparado com a média do estado (diferença menor que 5% conta como "na média"). Sem religião e sem raça/cor.
-- **Governo federal**: só o Bolsa Família (MDS), com famílias, pessoas, valor pago no mês e valor pago acumulado desde 03/2023. Valores em reais aparecem truncados.
+- **Governo federal** (só programas federais com dado oficial por município; valores em reais truncados):
+  - Bolsa Família (MDS, MI Social): famílias, pessoas, valor pago no mês e valor pago acumulado desde 03/2023.
+  - Pé-de-Meia (Portal da Transparência/CGU, último mês publicado, 06/2026): parcelas pagas e valor pago. Os pagamentos a menores de 18 anos vêm anonimizados, então a página conta **parcelas**, não estudantes. O script lê só as colunas de município e valor e apaga o arquivo bruto.
+  - Mais Médicos (Ministério da Saúde, API de Dados Abertos): vagas ocupadas (médicos atuando) no município, com a data de referência da fonte.
 - **"Nas cidades pequenas, o voto mudou de lado"**: as cidades com até 50 mil eleitores concentram 71% da piora do saldo de Lula sobre o adversário (−3,1 mi de −4,4 mi). A lista "Onde mais conta" tem filtro por porte; no filtro "Pequenas", ordena por votos perdidos.
 
 ## Tamanho
@@ -156,7 +160,10 @@ python scripts/04_publico.py        # página + arquivos sob demanda; confere a 
 - `painel_publico/dados/*.json`: 40 arquivos carregados quando a pessoa escolhe a cidade, cada um com até ~500 KB (≤ ~165 KB comprimido). São um por UF, UFs grandes divididas em partes, e São Paulo e Rio capitais em arquivo próprio. Total de 11,9 MB.
 
 ## Ficou de fora
-- **Outros programas federais** (Pé-de-Meia, Farmácia Popular, Mais Médicos, MCMV, Novo PAC, Luz para Todos, Auxílio Gás, transferências): os domínios oficiais estão bloqueados neste ambiente. Liberar `dadosabertos.mec.gov.br`, `apidadosabertos.saude.gov.br`, `opendatasus.saude.gov.br`, `dados.cidades.gov.br`, `novopac.casacivil.gov.br`, `www.gov.br`, `portaldatransparencia.gov.br` e `www.tesourotransparente.gov.br`.
+- **Farmácia Popular**: os arquivos ficam em `demas-dados-abertos.s3.amazonaws.com`, ainda bloqueado neste ambiente.
+- **Minha Casa Minha Vida e Novo PAC**: `dados.cidades.gov.br` e `novopac.casacivil.gov.br` não respondem a este ambiente (provavelmente bloqueiam acessos de fora do Brasil). Alternativa: a API do dados.gov.br, com chave gratuita guardada em variável do ambiente.
+- **Auxílio Gás**: o link de download do Portal da Transparência devolve erro 500.
+- **Transferências constitucionais (FPM etc.)**: são repasses obrigatórios, não entregas de programa, então ficaram de fora para não atribuir ao governo algo automático.
 - **BPC**: o MI Social mostra o mesmo número em todos os meses, então não é confiável.
 - **Perfil por bairro**: exigiria cruzar os locais com os setores censitários do Censo 2022.
 
@@ -185,3 +192,5 @@ Bolsa Família, consultado de novo no MI Social (MDS):
 | Itabuna: famílias, set/2026 | 22.171 | 22.171 | ✓ |
 | Salvador: valor pago, set/2026 | R$ 190.400.528 | R$ 190.400.528 | ✓ |
 | São Paulo: valor pago, mar/2023–set/2026 (43 meses) | R$ 19.576.961.312 | R$ 19.576.961.312 | ✓ |
+| Itabuna: Pé-de-Meia, parcelas e valor, jun/2026 (recontagem do CSV da CGU) | 4.137 / R$ 827.875,00 | 4.137 / R$ 827.875,00 | ✓ |
+| Feira de Santana: Mais Médicos, vagas ocupadas (09/10/2026) | 46 | 46 | ✓ |

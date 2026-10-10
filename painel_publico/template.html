@@ -138,6 +138,7 @@ footer p{margin:0}
 footer .resp{color:var(--ink);font-weight:700}
 footer .falta{color:var(--red-ink)}
 .loading{color:var(--ink-2);padding:12px 0}
+a{color:var(--red-ink)}
 [hidden]{display:none!important}
 @media (min-width:600px){ .hero h1{font-size:46px} .selo{width:112px;height:112px} .selo .n{font-size:48px} }
 </style>
@@ -261,7 +262,7 @@ function topo(){
   const def = Math.round(DADOS.deficit/1e6), jogo = Math.floor(DADOS.jogo/1e6);
   $("#lead").innerHTML = `No 1º turno, Lula ficou cerca de <b>${def} ${def===1?"milhão":"milhões"} de votos</b> atrás. Tem muito mais voto que isso em jogo: mais de <b>${jogo} milhões</b> de pessoas votaram em outros candidatos, votaram branco ou nulo, ou deixaram de votar.`;
   const d = DADOS.gerado_1t26.split(" ")[0], ex = new Date(DADOS.extracao).toLocaleDateString("pt-BR");
-  $("#fonte").innerHTML = `Fontes: TSE, resultados oficiais do 1º turno de 2026 (totalização de ${d}, sujeita a atualização), do 2º turno de 2022 e cadastro de locais de votação; IBGE, Censo 2022; MDS, Bolsa Família (${mesAno(DADOS.bf_periodo[1])}). Dados extraídos em ${ex}.`;
+  $("#fonte").innerHTML = `Fontes: TSE, resultados oficiais do 1º turno de 2026 (totalização de ${d}, sujeita a atualização), do 2º turno de 2022 e cadastro de locais de votação; IBGE, Censo 2022; MDS, Bolsa Família (${mesAno(DADOS.bf_periodo[1])}); CGU, Pé-de-Meia (${mesAno(DADOS.pdm_mes)}); Ministério da Saúde, Mais Médicos. Dados extraídos em ${ex}.`;
   $("#acoes").innerHTML = [1,2,3].map(a => `<div class="acao t${a}"><div><div class="nome"><span class="ico" aria-hidden="true">${a}</span>${ACOES[a].nome}</div><p>${ACOES[a].txt}</p></div></div>`).join("");
   const p = DADOS.pequenas;
   $("#peq").innerHTML = `<p class="big-stat">${p.parte}%</p><p style="margin:0">da perda de vantagem de Lula sobre o adversário, entre 2022 e o 1º turno, aconteceu nas <b>${nf0.format(p.n)} cidades com até 50 mil eleitores</b>. Nelas, Lula tinha ${nf0.format(Math.round(p.pv22))}% dos votos válidos em 2022 e ficou com ${nf0.format(Math.round(p.pv26))}% no 1º turno.</p><p class="hint">É onde a conversa com quem mudou o voto pode fazer mais diferença.</p>`;
@@ -340,7 +341,7 @@ function escolhe(c){
     const m = d[c.id]; if(!m) throw new Error("sem dados");
     $("#p-locais").innerHTML = locaisHTML(c, m);
     $("#p-perfil").innerHTML = perfilHTML(c, m.perfil);
-    $("#p-fed").innerHTML = fedHTML(c, m.bf);
+    $("#p-fed").innerHTML = fedHTML(c, m.bf, m.fed);
     ligaPainel(c, m);
   }).catch(() => {
     $("#p-locais").innerHTML = `<p class="loading">Não foi possível carregar os locais desta cidade. Verifique a conexão.</p><button class="btn" type="button" id="tenta">Tentar de novo</button>`;
@@ -417,10 +418,13 @@ function perfilHTML(c, p){
   ];
   return `<h3>Como é esta cidade</h3><div class="perfil">${linhas.map(([l,v,s]) => `<div class="p"><span>${l}</span><b>${v}</b><small>${s}</small></div>`).join("")}</div>`;
 }
-function fedHTML(c, bf){
-  if(!bf) return `<p class="hint">Sem dados do Bolsa Família para esta cidade.</p>`;
+function fedHTML(c, bf, fd){
   const ult = mesAno(DADOS.bf_periodo[1]), pri = mesAno(DADOS.bf_periodo[0]);
-  const itens = [
+  const pdm = mesAno(DADOS.pdm_mes), mmr = DADOS.mm_ref.split("-").reverse().join("/");
+  const F_MDS = {nome:"MDS, MI Social / VIS Data", url:FONTE_MDS, data:ult};
+  const F_PDM = {nome:"Portal da Transparência (CGU), Pé-de-Meia", url:"https://portaldatransparencia.gov.br/download-de-dados/pe-de-meia", data:pdm};
+  const F_MM = {nome:"Ministério da Saúde, API de Dados Abertos", url:"https://apidadosabertos.saude.gov.br/v1/", data:mmr};
+  const itens = bf ? [
     {lbl:"famílias recebem Bolsa Família", v:nf0.format(bf.familias), tipo:"pago", per:ult,
      frase:`Aqui, ${nf0.format(bf.familias)} famílias recebem Bolsa Família (MDS, ${ult}).`},
     {lbl:"pessoas nessas famílias", v:nf0.format(bf.pessoas), tipo:"pago", per:ult,
@@ -429,11 +433,20 @@ function fedHTML(c, bf){
      frase:`Em ${ult}, o Bolsa Família pagou ${reais(bf.valor_mes)} às famílias daqui (MDS).`},
     {lbl:`pagos em Bolsa Família de ${pri} a ${ult}`, v:reais(bf.valor_acum), tipo:"pago", per:`${pri} a ${ult}`,
      frase:`De ${pri} a ${ult}, o Bolsa Família pagou ${reais(bf.valor_acum)} às famílias daqui (MDS).`},
-  ];
+  ].map(x => ({...x, f:F_MDS})) : [];
+  if(fd && fd.pdm_parcelas) itens.push(
+    {lbl:`parcelas do Pé-de-Meia pagas a estudantes daqui em ${pdm}`, v:nf0.format(fd.pdm_parcelas), tipo:"pago", per:pdm, f:F_PDM,
+     frase:`Em ${pdm}, estudantes daqui receberam ${nf0.format(fd.pdm_parcelas)} parcelas do Pé-de-Meia (Portal da Transparência).`},
+    {lbl:`pagos pelo Pé-de-Meia em ${pdm}`, v:reais(fd.pdm_valor), tipo:"pago", per:pdm, f:F_PDM,
+     frase:`Em ${pdm}, o Pé-de-Meia pagou ${reais(fd.pdm_valor)} a estudantes daqui (Portal da Transparência).`});
+  if(fd && fd.mm_medicos) itens.push(
+    {lbl:"médicos do Mais Médicos atuando aqui", v:nf0.format(fd.mm_medicos), tipo:"vagas ocupadas", per:`situação em ${mmr}`, f:F_MM,
+     frase:`Aqui, ${nf0.format(fd.mm_medicos)} ${fd.mm_medicos===1?"médico do Mais Médicos atua":"médicos do Mais Médicos atuam"} (Ministério da Saúde, ${mmr}).`});
+  if(!itens.length) return `<p class="hint">Sem dados federais por município para esta cidade.</p>`;
   return `<h3>O que o governo federal fez aqui</h3><div class="fed">${itens.map((it,i) => `<div class="f"><b>${it.v}</b><span class="lbl">${it.lbl}</span>
-    <div class="meta">Situação: ${it.tipo} · período: ${it.per} · fonte: <a href="${FONTE_MDS}" target="_blank" rel="noopener">MDS, MI Social / VIS Data</a> · dado de ${ult}</div>
+    <div class="meta">Situação: ${it.tipo} · período: ${it.per} · fonte: <a href="${it.f.url}" target="_blank" rel="noopener">${it.f.nome}</a> · dado de ${it.f.data}</div>
     <div class="frase"><span>“${esc(it.frase)}”</span><button type="button" data-copia="${i}">Copiar</button></div></div>`).join("")}</div>
-    <p class="hint">Valores em reais aparecem truncados (nunca arredondados para cima). Outros programas federais entram quando houver dado oficial por município incorporado.</p>`;
+    <p class="hint">Valores em reais aparecem truncados (nunca arredondados para cima). Só programas federais com dado oficial por município. Outros programas entram quando houver dado oficial acessível.</p>`;
 }
 document.addEventListener("click", e => {
   const b = e.target.closest("button[data-copia]"); if(!b) return;
