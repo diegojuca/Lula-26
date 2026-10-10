@@ -58,9 +58,9 @@ def p1(v):
 
 def reais(v):  # sempre truncado
     if v >= 1e9:
-        return f"R$ {math.floor(v / 1e8) / 10:.1f} bilhões".replace(".", ",")
+        return f"R$ {math.floor(v / 1e8) / 10:.1f} {'bilhão' if v < 2e9 else 'bilhões'}".replace(".", ",").replace(",0 ", " ")
     if v >= 1e6:
-        return f"R$ {math.floor(v / 1e5) / 10:.1f} milhões".replace(".", ",")
+        return f"R$ {math.floor(v / 1e5) / 10:.1f} {'milhão' if v < 2e6 else 'milhões'}".replace(".", ",").replace(",0 ", " ")
     if v >= 1e3:
         return f"R$ {n0(v / 1e3)} mil"
     return f"R$ {n0(v)}"
@@ -104,6 +104,22 @@ ibge_nome = {str(m["id"]): m["nome"] for m in json.loads((RAW / "ibge" / "munici
 cod7 = {k[:6]: k for k in ibge_nome}
 NOME = dict(zip(mun.id, mun.nome))
 UFDE = dict(zip(mun.id, mun.uf))
+
+
+# "em" com artigo: cidades que levam artigo no uso corrente (lista fechada; na dúvida, "em" sem artigo)
+COM_ARTIGO = {"Recife": "no", "Rio de Janeiro": "no", "Crato": "no", "Cabo de Santo Agostinho": "no"}
+UF_PREP = {"AC": "no", "AP": "no", "AM": "no", "BA": "na", "CE": "no", "DF": "no", "ES": "no", "MA": "no", "PA": "no", "PB": "na",
+           "PR": "no", "PI": "no", "RJ": "no", "RN": "no", "RS": "no", "TO": "no"}
+
+
+def em(nome, inicio=False):
+    pr = COM_ARTIGO.get(nome, "em")
+    return f"{pr.capitalize() if inicio else pr} {nome}"
+
+
+def em_uf(uf, inicio=False):
+    pr = UF_PREP.get(uf, "em")
+    return f"{pr.capitalize() if inicio else pr} {UFN[uf]}"
 
 
 def lugar_cid(i):
@@ -155,19 +171,12 @@ for i, g in bf.groupby("id"):
     if meses_desde(BF_ULT) > LIM["BF-HOJE"]["dado_max_meses"]:
         bloq("BF-HOJE", "cidade", L, "dado velho", BF_ULT, i)
     elif fam >= LIM["BF-HOJE"]["min"]:
-        add(i, {**base, "_n": fam, "modelo": "BF-HOJE", "tipo": 1, "cat": "hoje", "grande": n0(fam), "rotulo": "famílias",
-                "texto": f"{L}: {n0(fam)} famílias recebem o Bolsa Família."})
         a = A["bolsa_familia"]
-        add(i, {**base, "_n": fam, "modelo": "BF-ORIGEM", "tipo": 2, "cat": "historia", "grande": "2003", "rotulo": "criado em",
-                "texto": f"O Bolsa Família, que hoje atende {n0(fam)} famílias em {NOME[i]}, foi criado em 2003, no governo Lula.",
-                "fonte": f"Planalto ({a['norma']}); MDS", "periodo": f"2003; {mes_txt(BF_ULT)}", "url": a["url"]})
+        add(i, {**base, "_n": fam, "modelo": "BF-HOJE", "tipo": 1, "cat": "hoje", "grande": n0(fam), "rotulo": "famílias",
+                "texto": f"Criado em 2003, no governo Lula, o Bolsa Família hoje atende {n0(fam)} famílias {em(NOME[i])}.",
+                "fonte": f"MDS, MI Social; Planalto ({a['norma']})", "url2": a["url"]})
     else:
         bloq("BF-HOJE", "cidade", L, "número pequeno", fam, i)
-    if val >= LIM["BF-VALOR"]["min"]:
-        add(i, {**base, "_n": fam, "modelo": "BF-VALOR", "tipo": 1, "cat": "hoje", "grande": reais(val), "rotulo": f"em {mes_txt(BF_ULT)}",
-                "texto": f"{L}: o Bolsa Família pagou {reais(val)} às famílias daqui em {mes_txt(BF_ULT)}."})
-    else:
-        bloq("BF-VALOR", "cidade", L, "número pequeno", val, i)
     # três tempos: média mensal de famílias e valor real médio por família (R$ do último IPCA)
     t = {}
     for j in ("lula12", "temer_bolsonaro", "lula3"):
@@ -197,7 +206,7 @@ for i, g in bf.groupby("id"):
         n = float(cz[cz.anomes_s == ym].qtd_cisternas_entregues_total_mds_i.sum())
         if n >= LIM["CISTERNAS"]["min"]:
             add(i, {**base, "_n": n, "modelo": "CISTERNAS", "tipo": 1, "cat": "hoje", "grande": n0(n), "rotulo": "cisternas",
-                    "texto": f"{L}: {n0(n)} cisternas foram entregues pelo programa federal de cisternas até {mes_txt(ym)}.",
+                    "texto": f"{em(NOME[i], True)}, {n0(n)} cisternas foram entregues pelo programa federal de cisternas até {mes_txt(ym)}.",
                     "periodo": f"até {mes_txt(ym)}"})
         else:
             bloq("CISTERNAS", "cidade", L, "número pequeno", n, i)
@@ -211,9 +220,12 @@ for i, r in fed.iterrows():
         if meses_desde(PDM_MES) > LIM["PDM-HOJE"]["dado_max_meses"]:
             bloq("PDM-HOJE", "cidade", L, "dado velho", PDM_MES, i)
         elif r.pdm_parcelas >= LIM["PDM-HOJE"]["min"]:
-            add(i, {"_n": r.pdm_parcelas, "modelo": "PDM-HOJE", "tipo": 1, "cat": "hoje", "nivel": "cidade", "lugar": L, "grande": n0(r.pdm_parcelas),
-                    "rotulo": "parcelas", "texto": f"{L}: estudantes daqui receberam {n0(r.pdm_parcelas)} parcelas do Pé-de-Meia em {mes_txt(PDM_MES)}.",
-                    "fonte": "CGU, Portal da Transparência", "periodo": mes_txt(PDM_MES), "url": URL["cgu_pdm"]})
+            # sem contagem de estudantes por município fora da lista nominal: o texto fala do valor pago, nunca de parcelas
+            a = A["pe_de_meia"]
+            add(i, {"_n": r.pdm_parcelas, "modelo": "PDM-HOJE", "tipo": 1, "cat": "hoje", "nivel": "cidade", "lugar": L, "grande": reais(r.pdm_valor),
+                    "rotulo": f"em {mes_txt(PDM_MES)}",
+                    "texto": f"Criado em 2024, no governo Lula, o Pé-de-Meia pagou {reais(r.pdm_valor)} a estudantes do ensino médio {em(NOME[i])} em {mes_txt(PDM_MES)}.",
+                    "fonte": f"CGU, Portal da Transparência; Planalto ({a['norma']})", "periodo": mes_txt(PDM_MES), "url": URL["cgu_pdm"], "url2": a["url"]})
         else:
             bloq("PDM-HOJE", "cidade", L, "número pequeno", r.pdm_parcelas, i)
     mm = r.mm_medicos
@@ -221,12 +233,10 @@ for i, r in fed.iterrows():
         ref = MM_REF.split("-")
         per = f"{ref[2]}/{ref[1]}/{ref[0]}"
         if mm >= LIM["MM-HOJE"]["min"]:
-            add(i, {"_n": mm, "modelo": "MM-HOJE", "tipo": 1, "cat": "hoje", "nivel": "cidade", "lugar": L, "grande": n0(mm), "rotulo": "médicos",
-                    "texto": f"{L}: {n0(mm)} médicos do Mais Médicos atendem hoje.", "fonte": "Ministério da Saúde", "periodo": per, "url": URL["saude"]})
             a = A["mais_medicos"]
-            add(i, {"_n": mm, "modelo": "MM-RETOMADA", "tipo": 2, "cat": "historia", "nivel": "cidade", "lugar": L, "grande": "2023", "rotulo": "retomado em",
-                    "texto": f"O Mais Médicos foi retomado em 2023, no governo Lula. Hoje são {n0(mm)} médicos do programa em {NOME[i]}.",
-                    "fonte": f"Planalto ({a['norma_retomada']}); Ministério da Saúde, {per}", "periodo": per, "url": a["url_retomada"]})
+            add(i, {"_n": mm, "modelo": "MM-HOJE", "tipo": 1, "cat": "hoje", "nivel": "cidade", "lugar": L, "grande": n0(mm), "rotulo": "médicos",
+                    "texto": f"Retomado em 2023, no governo Lula, o Mais Médicos tem hoje {n0(mm)} médicos atendendo {em(NOME[i])}.",
+                    "fonte": f"Ministério da Saúde; Planalto ({a['norma_retomada']})", "periodo": per, "url": URL["saude"], "url2": a["url_retomada"]})
         else:
             bloq("MM-HOJE", "cidade", L, "número pequeno", mm, i)
 
@@ -283,7 +293,7 @@ for serie, modelo, frase, lim in [("ADH_PMPOB", "POBREZA-MUN", "a parcela de pes
         un = "%" if modelo == "POBREZA-MUN" else ""
         add(i, {"_a": a, "_b": b, "modelo": modelo, "tipo": 3, "cat": "historia", "nivel": "cidade", "lugar": L,
                 "grande": f"{p1(a)}{un} → {p1(b)}{un}", "rotulo": "2000 → 2010",
-                "texto": f"{DEC} {frase} em {NOME[i]} caiu de {p1(a)}{un} para {p1(b)}{un}.",
+                "texto": f"{DEC} {frase} {em(NOME[i])} caiu de {p1(a)}{un} para {p1(b)}{un}.",
                 "fonte": "Atlas do Desenvolvimento Humano (PNUD, Ipea, FJP), Censos 2000 e 2010", "periodo": "2000 e 2010", "url": URL["atlas"]})
 
 # ---------------------------------------------------------------- Censo por bairro (2000 × 2010): água, esgoto, lixo
@@ -353,7 +363,7 @@ for nome_uf, v in fu.items():
         continue
     UFC.setdefault(uf, []).append({"modelo": "FOME-UF-L3", "tipo": 3, "cat": "historia", "nivel": "uf", "lugar": L,
                                    "grande": f"{p1(a)}% → {p1(b)}%", "rotulo": "2023 → 2024", "fecho": fecho("FOME-UF-L3"),
-                                   "texto": f"Em {L}, os domicílios em insegurança alimentar grave (fome) caíram de {p1(a)}% em 2023 para {p1(b)}% em 2024, no governo Lula.",
+                                   "texto": f"{em_uf(uf, True)}, os domicílios em insegurança alimentar grave (fome) caíram de {p1(a)}% em 2023 para {p1(b)}% em 2024, no governo Lula.",
                                    "fonte": "IBGE, PNAD Contínua, escala EBIA", "periodo": "2023 e 2024", "url": URL["sidra9552"]})
 # somatórios por UF (Bolsa Família, Pé-de-Meia, Mais Médicos)
 bu = bf[bf.anomes_s == BF_ULT].assign(uf=lambda d: d.id.map(UFDE)).groupby("uf")[["fam", "val"]].sum()
@@ -362,11 +372,11 @@ for uf in UFN:
     L = UFN[uf]
     if uf in bu.index:
         UFC.setdefault(uf, []).append({"modelo": "BF-HOJE", "tipo": 1, "cat": "hoje", "nivel": "uf", "lugar": L, "grande": n0(bu.loc[uf, "fam"]),
-                                       "rotulo": "famílias", "fecho": fecho("BF-HOJE"), "texto": f"Em {L}, {n0(bu.loc[uf, 'fam'])} famílias recebem o Bolsa Família.",
+                                       "rotulo": "famílias", "fecho": fecho("BF-HOJE"), "texto": f"{em_uf(uf, True)}, {n0(bu.loc[uf, 'fam'])} famílias recebem o Bolsa Família.",
                                        "fonte": "MDS, MI Social", "periodo": mes_txt(BF_ULT), "url": URL["mds"]})
     if uf in fu2.index and fu2.loc[uf, "mm_medicos"] >= 3:
         UFC.setdefault(uf, []).append({"modelo": "MM-HOJE", "tipo": 1, "cat": "hoje", "nivel": "uf", "lugar": L, "grande": n0(fu2.loc[uf, "mm_medicos"]),
-                                       "rotulo": "médicos", "fecho": fecho("MM-HOJE"), "texto": f"Em {L}, {n0(fu2.loc[uf, 'mm_medicos'])} médicos do Mais Médicos atendem hoje.",
+                                       "rotulo": "médicos", "fecho": fecho("MM-HOJE"), "texto": f"{em_uf(uf, True)}, {n0(fu2.loc[uf, 'mm_medicos'])} médicos do Mais Médicos atendem hoje.",
                                        "fonte": "Ministério da Saúde", "periodo": MM_REF, "url": URL["saude"]})
 
 BR = []
@@ -427,8 +437,7 @@ for m, motivo in [("FMI", "fonte oficial não conferida neste ambiente (BCB/Faze
 # s = alcance (pessoas alcançadas ÷ população, 0–1) + mudança (redução ou avanço relativo, 0–1) + bônus de programa
 # prioritário; ficam no máximo N por lugar e M por programa. O corte vai para data_publico/cards_cortados.json.
 R = C["relevancia"]
-PROG = {"BF-HOJE": "Bolsa Família", "BF-ORIGEM": "Bolsa Família", "BF-VALOR": "Bolsa Família", "MM-HOJE": "Mais Médicos",
-        "MM-RETOMADA": "Mais Médicos", "CISTERNAS": "Cisternas", "PDM-HOJE": "Pé-de-Meia", "CENSO-BAIRRO": "Infraestrutura (Censo)",
+PROG = {"BF-HOJE": "Bolsa Família", "MM-HOJE": "Mais Médicos", "CISTERNAS": "Cisternas", "PDM-HOJE": "Pé-de-Meia", "CENSO-BAIRRO": "Infraestrutura (Censo)",
         "POBREZA-MUN": "Pobreza (Atlas)", "MORT-INF-MUN": "Mortalidade infantil (Atlas)", "UBS-BAIRRO": "UBS"}
 PRIORITARIOS = set(R["programas_prioritarios"])
 sid = RAW / "ibge" / "sidra"
@@ -521,12 +530,15 @@ print(f"relevância: {ANTES} cards locais antes, {sum(len(v) for v in CARDS.valu
 # ---------------------------------------------------------------- saída por UF (cidade + bairros) e Brasil
 ORDEM = {"bairro": 0, "cidade": 1, "uf": 2, "brasil": 3}
 porUF = {}
+for k in CB:  # todo bairro conhecido do Censo entra na lista, mesmo sem card próprio
+    CARDS.setdefault(k, [])
 for chave, cs in CARDS.items():
     i, _, b = chave.partition("|")
     uf = UFDE.get(i)
     if not uf:
         continue
-    if not cs:
+    # bairro sem card próprio continua na lista (mostra os cards da cidade); cidade sem card nenhum fica de fora
+    if not cs and not (b and chave in CB):
         continue
     d = porUF.setdefault(uf, {}).setdefault(i, {"c": [], "b": {}})
     if b:

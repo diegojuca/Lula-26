@@ -89,7 +89,7 @@ md += ["", "## Carrossel final dos lugares de validação", ""]
 for rot, i, b in LUGARES:
     loc, amp = carrossel(i, b)
     md += [f"**{rot}**", "", "| # | Nível | Card | Pontuação | Fonte |", "|---|---|---|---:|---|"]
-    md += [f"| {k} | {c['nivel']} | {c['texto']} | {c.get('s', 0):.2f} | [{FONTES.get(str(c['fonte']), c['fonte'])}]({URLS.get(str(c['url']), c['url'])}) |"
+    md += [f"| {k} | {c['nivel']} | {c['texto']} | {c.get('s', 0):.2f} | [{FONTES.get(str(c['fonte']), c['fonte'])}]({URLS.get(str(c['url']), c['url'])}){f" · [norma]({c['url2']})" if c.get('url2') else ''} |"
            for k, c in enumerate(loc + amp, 1)]
     md += [""]
 (ROOT / "docs" / "cards_relevancia.md").write_text("\n".join(md) + "\n")

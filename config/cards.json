@@ -36,10 +36,6 @@
       "min": 100,
       "dado_max_meses": 3
     },
-    "BF-VALOR": {
-      "min": 100000,
-      "dado_max_meses": 3
-    },
     "PDM-HOJE": {
       "min": 50,
       "dado_max_meses": 6
@@ -47,9 +43,6 @@
     "MM-HOJE": {
       "min": 2,
       "dado_max_meses": 3
-    },
-    "MM-RETOMADA": {
-      "min": 2
     },
     "UBS-BAIRRO": {
       "min": 2
@@ -81,29 +74,13 @@
   },
   "fechos_por_modelo": {
     "BF-HOJE": [
-      "F1",
-      "F5",
-      "R1"
-    ],
-    "BF-VALOR": [
-      "F1",
-      "F5"
+      "F2"
     ],
     "PDM-HOJE": [
-      "F2",
-      "F1"
+      "F2"
     ],
     "MM-HOJE": [
-      "F3",
-      "F1"
-    ],
-    "BF-ORIGEM": [
-      "F2",
-      "R2"
-    ],
-    "MM-RETOMADA": [
-      "F3",
-      "R2"
+      "F3"
     ],
     "MCMV-ORIGEM": [
       "F2"
@@ -183,7 +160,7 @@
     },
     "bonus_prioritario": 0.5,
     "max_por_lugar": 5,
-    "max_por_programa": 2,
+    "max_por_programa": 1,
     "amplos_se_locais_menor_que": 3
   }
 }
