@@ -1,0 +1,917 @@
+{
+ "titulo": "Cenário Presidencial 2026 — 2T22 → 1T26",
+ "data_extracao": "2026-10-09T22:39-03:00",
+ "candidatos": {
+  "lula": "Lula (PT)",
+  "adv22": "Jair Bolsonaro (PL)",
+  "adv26": "Flavio Bolsonaro (PL)"
+ },
+ "outros_1t26": {
+  "Escritor Augusto Cury": 3448569,
+  "Renan Santos": 2675887,
+  "Ronaldo Caiado": 2605148,
+  "Zema": 326488,
+  "Samara": 122911,
+  "Hertz Dias": 43103,
+  "Clariana Barao": 40043,
+  "Edmilson Costa": 22693,
+  "Veterinário Wilson Grassi": 16881,
+  "Rui Costa Pimenta": 15024
+ },
+ "brasil": {
+  "virada": "possivel",
+  "sit_saldo": "virou_contra",
+  "aptos_22": 156454011.0,
+  "comp_22": 124252796.0,
+  "abst_22": 32200558.0,
+  "bn_22": 5700443.0,
+  "validos_22": 118552353.0,
+  "lula_22": 60345999.0,
+  "adv_22": 58206354.0,
+  "aptos_26": 158745502.0,
+  "comp_26": 125275835.0,
+  "abst_26": 33469244.0,
+  "bn_26": 5975047.0,
+  "validos_26": 119300788.0,
+  "lula_26": 53879538.0,
+  "adv_26": 56104503.0,
+  "outros_26": 9316747.0,
+  "saldo22": 2139645.0,
+  "saldo26": -2224965.0,
+  "d_saldo": -4364610.0,
+  "d_lula": -6466461.0,
+  "d_adv": -2101851.0,
+  "d_aptos": 2291491.0,
+  "abst_exc": 1933967.376,
+  "estoque": 17224957.376,
+  "deficit": 2224965.0,
+  "perda_esc": 7350313.787,
+  "dest_abst": 797063.135,
+  "dest_bn": 191112.923,
+  "dest_terc": 9316747.0,
+  "dest_adv": -2954365.649,
+  "potencial": 8529357.707,
+  "pv_l22": 50.902,
+  "pv_l26": 45.163,
+  "pv_a22": 49.098,
+  "pv_a26": 47.028,
+  "pv_o26": 7.809,
+  "pen_l22": 38.571,
+  "pen_l26": 33.941,
+  "pen_a22": 37.203,
+  "pen_a26": 35.342,
+  "d_pen_l": -4.63,
+  "d_pen_a": -1.861,
+  "d_pv_l": -5.74,
+  "d_pv_a": -2.07,
+  "saldo_pp22": 1.805,
+  "saldo_pp26": -1.865,
+  "d_saldo_pp": -3.67,
+  "abs22": 20.581,
+  "abs26": 21.084,
+  "d_abs": 0.502,
+  "abs_hist": 20.764,
+  "abs_exc_pp": 0.32,
+  "bnp22": 4.588,
+  "bnp26": 4.77,
+  "d_aptos_pct": 1.465
+ },
+ "brasil_sem_exterior": {
+  "estoque": 17125262.305,
+  "potencial": 8455374.018,
+  "abst_exc": 1873947.305
+ },
+ "parametros": {
+  "reduto_pv": 55.0,
+  "adverso_pv": 45.0,
+  "queda_relevante_pen": -7.0,
+  "abst_alta": 25.0,
+  "abst_cresc": 2.0,
+  "disputa_aptos": 50000
+ },
+ "amc": {
+  "5107925": "Sorriso + Nova Ubiratã + Boa Esperança do Norte (AMC)",
+  "membros": [
+   "5107925",
+   "5106240",
+   "5101837"
+  ]
+ },
+ "indicadores": {
+  "pv_l22": {
+   "rotulo": "Lula % válidos 2T22",
+   "unid": "%"
+  },
+  "renda_media": {
+   "rotulo": "Renda domiciliar per capita média (R$)",
+   "unid": "R$"
+  },
+  "renda_mediana": {
+   "rotulo": "Renda domiciliar per capita mediana (R$)",
+   "unid": "R$"
+  },
+  "pib_pc": {
+   "rotulo": "PIB per capita 2022 (R$)",
+   "unid": "R$"
+  },
+  "pbf_pop": {
+   "rotulo": "Pessoas no Bolsa Família (% pop.)",
+   "unid": "%"
+  },
+  "urbana": {
+   "rotulo": "População urbana (%)",
+   "unid": "%"
+  },
+  "negra": {
+   "rotulo": "Preta + parda (%)",
+   "unid": "%"
+  },
+  "alfab": {
+   "rotulo": "Alfabetização 15+ (%)",
+   "unid": "%"
+  },
+  "superior": {
+   "rotulo": "Superior completo 18+ (%)",
+   "unid": "%"
+  },
+  "evangelicos": {
+   "rotulo": "Evangélicos 15+ (%)",
+   "unid": "%"
+  },
+  "catolicos": {
+   "rotulo": "Católicos 15+ (%)",
+   "unid": "%"
+  },
+  "densidade": {
+   "rotulo": "Densidade (hab/km²)",
+   "unid": "hab/km²"
+  },
+  "el_jov": {
+   "rotulo": "Eleitorado 16–24 anos (%)",
+   "unid": "%"
+  },
+  "el_ido": {
+   "rotulo": "Eleitorado 60+ (%)",
+   "unid": "%"
+  },
+  "el_fem": {
+   "rotulo": "Eleitorado feminino (%)",
+   "unid": "%"
+  },
+  "el_baixa": {
+   "rotulo": "Eleitorado até fund. incompleto (%)",
+   "unid": "%"
+  },
+  "el_sup": {
+   "rotulo": "Eleitorado com superior completo (%)",
+   "unid": "%"
+  }
+ },
+ "perfil_segmentos": [
+  {
+   "seg": "reconquista",
+   "n": 677,
+   "aptos_26": 9618338,
+   "d_lula": -633592,
+   "potencial": 936621,
+   "estoque": 1067864,
+   "d_pen_l": -8.7,
+   "abs26": 20.697,
+   "d_abs": 1.708,
+   "pv_l22": 67.432,
+   "renda_media": 1127.148,
+   "renda_mediana": 803.844,
+   "pib_pc": 34544.19,
+   "pbf_pop": 32.209,
+   "urbana": 75.445,
+   "negra": 63.899,
+   "alfab": 88.205,
+   "superior": 10.941,
+   "evangelicos": 19.935,
+   "catolicos": 67.944,
+   "densidade": 785.086,
+   "el_jov": 13.064,
+   "el_ido": 22.827,
+   "el_fem": 51.887,
+   "el_baixa": 39.151,
+   "el_sup": 7.203
+  },
+  {
+   "seg": "mobilizacao",
+   "n": 295,
+   "aptos_26": 8599741,
+   "d_lula": -279505,
+   "potencial": 466749,
+   "estoque": 926628,
+   "d_pen_l": -4.083,
+   "abs26": 21.939,
+   "d_abs": 1.445,
+   "pv_l22": 66.539,
+   "renda_media": 1326.378,
+   "renda_mediana": 751.48,
+   "pib_pc": 30577.746,
+   "pbf_pop": 35.086,
+   "urbana": 85.335,
+   "negra": 73.466,
+   "alfab": 90.117,
+   "superior": 14.356,
+   "evangelicos": 25.896,
+   "catolicos": 53.957,
+   "densidade": 2388.858,
+   "el_jov": 12.254,
+   "el_ido": 23.212,
+   "el_fem": 53.445,
+   "el_baixa": 33.323,
+   "el_sup": 10.168
+  },
+  {
+   "seg": "disputa",
+   "n": 106,
+   "aptos_26": 35666397,
+   "d_lula": -1894822,
+   "potencial": 2216757,
+   "estoque": 4738385,
+   "d_pen_l": -5.196,
+   "abs26": 22.398,
+   "d_abs": 2.024,
+   "pv_l22": 49.965,
+   "renda_media": 2220.53,
+   "renda_mediana": 1235.806,
+   "pib_pc": 68817.613,
+   "pbf_pop": 17.182,
+   "urbana": 98.811,
+   "negra": 51.186,
+   "alfab": 96.707,
+   "superior": 23.204,
+   "evangelicos": 26.517,
+   "catolicos": 50.088,
+   "densidade": 4264.397,
+   "el_jov": 10.827,
+   "el_ido": 25.467,
+   "el_fem": 54.097,
+   "el_baixa": 22.353,
+   "el_sup": 14.41
+  },
+  {
+   "seg": "consolidado",
+   "n": 1689,
+   "aptos_26": 33441954,
+   "d_lula": -558332,
+   "potencial": 1140279,
+   "estoque": 2683972,
+   "d_pen_l": -2.989,
+   "abs26": 18.339,
+   "d_abs": -2.34,
+   "pv_l22": 71.479,
+   "renda_media": 918.851,
+   "renda_mediana": 620.207,
+   "pib_pc": 21927.195,
+   "pbf_pop": 45.11,
+   "urbana": 70.713,
+   "negra": 73.328,
+   "alfab": 84.238,
+   "superior": 9.384,
+   "evangelicos": 21.893,
+   "catolicos": 67.376,
+   "densidade": 717.642,
+   "el_jov": 14.625,
+   "el_ido": 20.753,
+   "el_fem": 52.043,
+   "el_baixa": 41.815,
+   "el_sup": 6.601
+  },
+  {
+   "seg": "equilibrio",
+   "n": 902,
+   "aptos_26": 8650511,
+   "d_lula": -513284,
+   "potencial": 632699,
+   "estoque": 887234,
+   "d_pen_l": -6.653,
+   "abs26": 21.974,
+   "d_abs": 0.282,
+   "pv_l22": 49.779,
+   "renda_media": 1322.792,
+   "renda_mediana": 987.975,
+   "pib_pc": 41940.814,
+   "pbf_pop": 23.905,
+   "urbana": 78.023,
+   "negra": 53.256,
+   "alfab": 91.831,
+   "superior": 11.082,
+   "evangelicos": 26.45,
+   "catolicos": 63.163,
+   "densidade": 56.555,
+   "el_jov": 12.012,
+   "el_ido": 25.177,
+   "el_fem": 51.015,
+   "el_baixa": 39.259,
+   "el_sup": 7.93
+  },
+  {
+   "seg": "adverso",
+   "n": 1900,
+   "aptos_26": 61852027,
+   "d_lula": -2591408,
+   "potencial": 3062266,
+   "estoque": 6821177,
+   "d_pen_l": -4.523,
+   "abs26": 21.01,
+   "d_abs": 0.763,
+   "pv_l22": 36.222,
+   "renda_media": 1838.304,
+   "renda_mediana": 1239.112,
+   "pib_pc": 60365.241,
+   "pbf_pop": 16.017,
+   "urbana": 91.52,
+   "negra": 45.334,
+   "alfab": 95.974,
+   "superior": 18.077,
+   "evangelicos": 29.497,
+   "catolicos": 54.662,
+   "densidade": 734.708,
+   "el_jov": 11.346,
+   "el_ido": 24.149,
+   "el_fem": 52.797,
+   "el_baixa": 26.989,
+   "el_sup": 13.091
+  },
+  {
+   "seg": "todos",
+   "n": 5569,
+   "aptos_26": 157828968,
+   "d_lula": -6470943,
+   "potencial": 8455374,
+   "estoque": 17125262,
+   "d_pen_l": -4.698,
+   "abs26": 20.842,
+   "d_abs": 0.459,
+   "pv_l22": 51.095,
+   "renda_media": 1630.372,
+   "renda_mediana": 1040.366,
+   "pib_pc": 49924.326,
+   "pbf_pop": 24.903,
+   "urbana": 86.702,
+   "negra": 55.687,
+   "alfab": 92.634,
+   "superior": 16.373,
+   "evangelicos": 26.267,
+   "catolicos": 57.559,
+   "densidade": 1584.767,
+   "el_jov": 12.114,
+   "el_ido": 23.652,
+   "el_fem": 52.813,
+   "el_baixa": 30.842,
+   "el_sup": 11.213
+  }
+ ],
+ "correlacoes": {
+  "renda_media": {
+   "d_pen_l": -0.16660012250615688,
+   "d_abs": 0.507143277087557,
+   "pv_l26": -0.5191274767059203
+  },
+  "renda_mediana": {
+   "d_pen_l": -0.2714059186112712,
+   "d_abs": 0.5156173275034751,
+   "pv_l26": -0.7046693118914602
+  },
+  "pib_pc": {
+   "d_pen_l": -0.11743443082114055,
+   "d_abs": 0.2256474786223484,
+   "pv_l26": -0.2912364878089363
+  },
+  "pbf_pop": {
+   "d_pen_l": 0.372661154507352,
+   "d_abs": -0.5856002757733381,
+   "pv_l26": 0.7633712118482004
+  },
+  "urbana": {
+   "d_pen_l": -0.10250091922432608,
+   "d_abs": 0.48303393608603196,
+   "pv_l26": -0.47817488255034957
+  },
+  "negra": {
+   "d_pen_l": 0.2820053035783833,
+   "d_abs": -0.4129628001727766,
+   "pv_l26": 0.6325070283219552
+  },
+  "alfab": {
+   "d_pen_l": -0.20858670132443966,
+   "d_abs": 0.521669987837141,
+   "pv_l26": -0.7237253111764895
+  },
+  "superior": {
+   "d_pen_l": -0.06055312988439284,
+   "d_abs": 0.45463459060082717,
+   "pv_l26": -0.41265052767810345
+  },
+  "evangelicos": {
+   "d_pen_l": 0.21385841906884068,
+   "d_abs": -0.03596440250791812,
+   "pv_l26": -0.39924032796713016
+  },
+  "catolicos": {
+   "d_pen_l": -0.15723240760716828,
+   "d_abs": -0.19373767085777543,
+   "pv_l26": 0.34390389233835356
+  },
+  "densidade": {
+   "d_pen_l": -0.05503454680146766,
+   "d_abs": 0.30274663430505355,
+   "pv_l26": 0.0032354592206189172
+  },
+  "el_jov": {
+   "d_pen_l": 0.32106351080475937,
+   "d_abs": -0.6145618727494762,
+   "pv_l26": 0.4664235322457802
+  },
+  "el_ido": {
+   "d_pen_l": -0.2285066852608917,
+   "d_abs": 0.39136440404497164,
+   "pv_l26": -0.2512081495497299
+  },
+  "el_fem": {
+   "d_pen_l": 0.000947011489101004,
+   "d_abs": 0.46771490703507457,
+   "pv_l26": -0.1376875162992312
+  },
+  "el_baixa": {
+   "d_pen_l": 0.06729537779294399,
+   "d_abs": -0.454106148688496,
+   "pv_l26": 0.5035850602488223
+  },
+  "el_sup": {
+   "d_pen_l": -0.03957828086217337,
+   "d_abs": 0.36240541166339313,
+   "pv_l26": -0.4454855980193976
+  }
+ },
+ "fontes": [
+  {
+   "nome": "TSE — Detalhe da votação e votação por candidato por município/zona, 2022 (1º e 2º turno)",
+   "url": "https://dadosabertos.tse.jus.br/",
+   "ciclo": "2022",
+   "status": "oficial",
+   "gerado": "09/10/2026 03:17:58"
+  },
+  {
+   "nome": "TSE — Detalhe da votação e votação por candidato por município/zona, 2026 (1º turno)",
+   "url": "https://dadosabertos.tse.jus.br/",
+   "ciclo": "2026",
+   "status": "oficial — totalização TSE, sujeito a atualização",
+   "gerado": "09/10/2026 16:32:30"
+  },
+  {
+   "nome": "TSE — Divulgação de resultados 1T26 (conferência por UF) e de-para TSE×IBGE",
+   "url": "https://resultados.tse.jus.br/",
+   "ciclo": "2026",
+   "status": "oficial"
+  },
+  {
+   "nome": "TSE — Perfil do eleitorado 2026 (sexo, idade, escolaridade)",
+   "url": "https://dadosabertos.tse.jus.br/dataset/eleitorado-2026",
+   "ciclo": "07/2026",
+   "status": "oficial"
+  },
+  {
+   "nome": "IBGE — Censo Demográfico 2022 (SIDRA: 4714, 4712, 9923, 9605, 9543, 10061, 10295, 10198)",
+   "url": "https://sidra.ibge.gov.br/",
+   "ciclo": "2022",
+   "status": "oficial (defasado: 2022)"
+  },
+  {
+   "nome": "IBGE — PIB dos Municípios (SIDRA 5938), per capita com população do Censo 2022",
+   "url": "https://sidra.ibge.gov.br/tabela/5938",
+   "ciclo": "2022",
+   "status": "oficial (defasado: 2022)"
+  },
+  {
+   "nome": "MDS — MI Social, Bolsa Família por município (09/2026)",
+   "url": "https://aplicacoes.mds.gov.br/sagi/",
+   "ciclo": "202609",
+   "status": "oficial"
+  },
+  {
+   "nome": "IBGE — Malha municipal (API de malhas v3, qualidade mínima)",
+   "url": "https://servicodados.ibge.gov.br/api/docs/malhas?versao=3",
+   "ciclo": "2022",
+   "status": "oficial"
+  }
+ ],
+ "validacao": {
+  "ok": true,
+  "oficial_2t22": {
+   "lula": 60345999,
+   "adv": 58206354
+  },
+  "tabela": [
+   {
+    "uf": "AC",
+    "lula_1t26": 134770,
+    "lula_1t26_tse": 134770,
+    "adv_1t26": 302807,
+    "adv_1t26_tse": 302807,
+    "validos_1t26": 469066,
+    "validos_1t26_tse": 469066,
+    "lula_2t22": 121566,
+    "adv_2t22": 287750,
+    "validos_2t22": 409316,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "AL",
+    "lula_1t26": 995459,
+    "lula_1t26_tse": 995459,
+    "adv_1t26": 735718,
+    "adv_1t26_tse": 735718,
+    "validos_1t26": 1818856,
+    "validos_1t26_tse": 1818856,
+    "lula_2t22": 976831,
+    "adv_2t22": 687827,
+    "validos_2t22": 1664658,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "AM",
+    "lula_1t26": 1046996,
+    "lula_1t26_tse": 1046996,
+    "adv_1t26": 976764,
+    "adv_1t26_tse": 976764,
+    "validos_1t26": 2170763,
+    "validos_1t26_tse": 2170763,
+    "lula_2t22": 1004991,
+    "adv_2t22": 961741,
+    "validos_2t22": 1966732,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "AP",
+    "lula_1t26": 212503,
+    "lula_1t26_tse": 212503,
+    "adv_1t26": 212278,
+    "adv_1t26_tse": 212278,
+    "validos_1t26": 464858,
+    "validos_1t26_tse": 464858,
+    "lula_2t22": 189918,
+    "adv_2t22": 200547,
+    "validos_2t22": 390465,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "BA",
+    "lula_1t26": 5664771,
+    "lula_1t26_tse": 5664771,
+    "adv_1t26": 2442585,
+    "adv_1t26_tse": 2442585,
+    "validos_1t26": 8560291,
+    "validos_1t26_tse": 8560291,
+    "lula_2t22": 6097815,
+    "adv_2t22": 2357028,
+    "validos_2t22": 8454843,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "CE",
+    "lula_1t26": 3555263,
+    "lula_1t26_tse": 3555263,
+    "adv_1t26": 1756850,
+    "adv_1t26_tse": 1756850,
+    "validos_1t26": 5617814,
+    "validos_1t26_tse": 5617814,
+    "lula_2t22": 3807891,
+    "adv_2t22": 1634477,
+    "validos_2t22": 5442368,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "DF",
+    "lula_1t26": 675627,
+    "lula_1t26_tse": 675627,
+    "adv_1t26": 909616,
+    "adv_1t26_tse": 909616,
+    "validos_1t26": 1772808,
+    "validos_1t26_tse": 1772808,
+    "lula_2t22": 729295,
+    "adv_2t22": 1041331,
+    "validos_2t22": 1770626,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "ES",
+    "lula_1t26": 850028,
+    "lula_1t26_tse": 850028,
+    "adv_1t26": 1233194,
+    "adv_1t26_tse": 1233194,
+    "validos_1t26": 2251078,
+    "validos_1t26_tse": 2251078,
+    "lula_2t22": 926767,
+    "adv_2t22": 1282145,
+    "validos_2t22": 2208912,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "GO",
+    "lula_1t26": 1188880,
+    "lula_1t26_tse": 1188880,
+    "adv_1t26": 2051888,
+    "adv_1t26_tse": 2051888,
+    "validos_1t26": 3827823,
+    "validos_1t26_tse": 3827823,
+    "lula_2t22": 1542115,
+    "adv_2t22": 2193041,
+    "validos_2t22": 3735156,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "MA",
+    "lula_1t26": 2566301,
+    "lula_1t26_tse": 2566301,
+    "adv_1t26": 1239040,
+    "adv_1t26_tse": 1239040,
+    "validos_1t26": 4010439,
+    "validos_1t26_tse": 4010439,
+    "lula_2t22": 2668425,
+    "adv_2t22": 1082749,
+    "validos_2t22": 3751174,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "MG",
+    "lula_1t26": 5188936,
+    "lula_1t26_tse": 5188936,
+    "adv_1t26": 5777548,
+    "adv_1t26_tse": 5777548,
+    "validos_1t26": 11976235,
+    "validos_1t26_tse": 11976235,
+    "lula_2t22": 6190960,
+    "adv_2t22": 6141310,
+    "validos_2t22": 12332270,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "MS",
+    "lula_1t26": 516855,
+    "lula_1t26_tse": 516855,
+    "adv_1t26": 873351,
+    "adv_1t26_tse": 873351,
+    "validos_1t26": 1490278,
+    "validos_1t26_tse": 1490278,
+    "lula_2t22": 599547,
+    "adv_2t22": 880606,
+    "validos_2t22": 1480153,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "MT",
+    "lula_1t26": 581681,
+    "lula_1t26_tse": 581681,
+    "adv_1t26": 1298581,
+    "adv_1t26_tse": 1298581,
+    "validos_1t26": 1993288,
+    "validos_1t26_tse": 1993288,
+    "lula_2t22": 652786,
+    "adv_2t22": 1216730,
+    "validos_2t22": 1869516,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "PA",
+    "lula_1t26": 2427237,
+    "lula_1t26_tse": 2427237,
+    "adv_1t26": 2163957,
+    "adv_1t26_tse": 2163957,
+    "validos_1t26": 4863172,
+    "validos_1t26_tse": 4863172,
+    "lula_2t22": 2509084,
+    "adv_2t22": 2073895,
+    "validos_2t22": 4582979,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "PB",
+    "lula_1t26": 1541127,
+    "lula_1t26_tse": 1541127,
+    "adv_1t26": 831377,
+    "adv_1t26_tse": 831377,
+    "validos_1t26": 2513747,
+    "validos_1t26_tse": 2513747,
+    "lula_2t22": 1601953,
+    "adv_2t22": 802502,
+    "validos_2t22": 2404455,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "PE",
+    "lula_1t26": 3553971,
+    "lula_1t26_tse": 3553971,
+    "adv_1t26": 1738043,
+    "adv_1t26_tse": 1738043,
+    "validos_1t26": 5601017,
+    "validos_1t26_tse": 5601017,
+    "lula_2t22": 3640933,
+    "adv_2t22": 1798832,
+    "validos_2t22": 5439765,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "PI",
+    "lula_1t26": 1523710,
+    "lula_1t26_tse": 1523710,
+    "adv_1t26": 517028,
+    "adv_1t26_tse": 517028,
+    "validos_1t26": 2146394,
+    "validos_1t26_tse": 2146394,
+    "lula_2t22": 1551383,
+    "adv_2t22": 467065,
+    "validos_2t22": 2018448,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "PR",
+    "lula_1t26": 2054597,
+    "lula_1t26_tse": 2054597,
+    "adv_1t26": 3945345,
+    "adv_1t26_tse": 3945345,
+    "validos_1t26": 6585243,
+    "validos_1t26_tse": 6585243,
+    "lula_2t22": 2506605,
+    "adv_2t22": 4159343,
+    "validos_2t22": 6665948,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "RJ",
+    "lula_1t26": 3693021,
+    "lula_1t26_tse": 3693021,
+    "adv_1t26": 4966844,
+    "adv_1t26_tse": 4966844,
+    "validos_1t26": 9369700,
+    "validos_1t26_tse": 9369700,
+    "lula_2t22": 4156217,
+    "adv_2t22": 5403894,
+    "validos_2t22": 9560111,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "RN",
+    "lula_1t26": 1237963,
+    "lula_1t26_tse": 1237963,
+    "adv_1t26": 720493,
+    "adv_1t26_tse": 720493,
+    "validos_1t26": 2071898,
+    "validos_1t26_tse": 2071898,
+    "lula_2t22": 1326785,
+    "adv_2t22": 711381,
+    "validos_2t22": 2038166,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "RO",
+    "lula_1t26": 250667,
+    "lula_1t26_tse": 250667,
+    "adv_1t26": 652988,
+    "adv_1t26_tse": 652988,
+    "validos_1t26": 968059,
+    "validos_1t26_tse": 968059,
+    "lula_2t22": 262904,
+    "adv_2t22": 633236,
+    "validos_2t22": 896140,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "RR",
+    "lula_1t26": 74420,
+    "lula_1t26_tse": 74420,
+    "adv_1t26": 231322,
+    "adv_1t26_tse": 231322,
+    "validos_1t26": 325545,
+    "validos_1t26_tse": 325545,
+    "lula_2t22": 67128,
+    "adv_2t22": 213518,
+    "validos_2t22": 280646,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "RS",
+    "lula_1t26": 2294759,
+    "lula_1t26_tse": 2294759,
+    "adv_1t26": 3573783,
+    "adv_1t26_tse": 3573783,
+    "validos_1t26": 6423046,
+    "validos_1t26_tse": 6423046,
+    "lula_2t22": 2891851,
+    "adv_2t22": 3733185,
+    "validos_2t22": 6625036,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "SC",
+    "lula_1t26": 1127168,
+    "lula_1t26_tse": 1127168,
+    "adv_1t26": 3000020,
+    "adv_1t26_tse": 3000020,
+    "validos_1t26": 4500897,
+    "validos_1t26_tse": 4500897,
+    "lula_2t22": 1351918,
+    "adv_2t22": 3047630,
+    "validos_2t22": 4399548,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "SE",
+    "lula_1t26": 856019,
+    "lula_1t26_tse": 856019,
+    "adv_1t26": 417839,
+    "adv_1t26_tse": 417839,
+    "validos_1t26": 1364196,
+    "validos_1t26_tse": 1364196,
+    "lula_2t22": 862951,
+    "adv_2t22": 421086,
+    "validos_2t22": 1284037,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "SP",
+    "lula_1t26": 9505413,
+    "lula_1t26_tse": 9505413,
+    "adv_1t26": 12922023,
+    "adv_1t26_tse": 12922023,
+    "validos_1t26": 24882948,
+    "validos_1t26_tse": 24882948,
+    "lula_2t22": 11519882,
+    "adv_2t22": 14216587,
+    "validos_2t22": 25736469,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "TO",
+    "lula_1t26": 404009,
+    "lula_1t26_tse": 404009,
+    "adv_1t26": 469321,
+    "adv_1t26_tse": 469321,
+    "validos_1t26": 930447,
+    "validos_1t26_tse": 930447,
+    "lula_2t22": 434593,
+    "adv_2t22": 411654,
+    "validos_2t22": 846247,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "ZZ",
+    "lula_1t26": 157387,
+    "lula_1t26_tse": 157387,
+    "adv_1t26": 143900,
+    "adv_1t26_tse": 143900,
+    "validos_1t26": 330882,
+    "validos_1t26_tse": 330882,
+    "lula_2t22": 152905,
+    "adv_2t22": 145264,
+    "validos_2t22": 298169,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   },
+   {
+    "uf": "BR",
+    "lula_1t26": 53879538,
+    "lula_1t26_tse": 53879538,
+    "adv_1t26": 56104503,
+    "adv_1t26_tse": 56104503,
+    "validos_1t26": 119300788,
+    "validos_1t26_tse": 119300788,
+    "lula_2t22": 60345999,
+    "adv_2t22": 58206354,
+    "validos_2t22": 118552353,
+    "soma_cand_2t22_ok": true,
+    "ok_1t26": true
+   }
+  ]
+ }
+}
