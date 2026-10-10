@@ -15,6 +15,7 @@
   --a2:#c98500; --a2-bg:#fbf0d9;   /* Conversar com quem mudou */
   --a3:#2a78d6; --a3-bg:#e4eefb;   /* Disputar bairro a bairro */
   --a0:#7a6e6f; --a0-bg:#f1ecec;   /* sem ação / fora das prioritárias */
+  --b-fora:#cdc4c5; --b-uf:#7a6e6f; --map-bg:#f3eceb; --map-line:#d9cccb;
   --focus:#2a78d6;
   --f-ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
@@ -25,6 +26,7 @@
     --red:#a3172b; --red-deep:#6e0c1a; --on-red:#ffffff; --red-ink:#ff8a96;
     --a1:#199e70; --a1-bg:#11302a; --a2:#c98500; --a2-bg:#332611; --a3:#3987e5; --a3-bg:#152740; --a0:#a99a9b; --a0-bg:#2a2021;
     --focus:#6ea1ff;
+    --b-fora:#56494b; --b-uf:#a99a9b; --map-bg:#1b1213; --map-line:#3d2e30;
   }
 }
 :root[data-theme="dark"]{
@@ -33,6 +35,7 @@
   --red:#a3172b; --red-deep:#6e0c1a; --on-red:#ffffff; --red-ink:#ff8a96;
   --a1:#199e70; --a1-bg:#11302a; --a2:#c98500; --a2-bg:#332611; --a3:#3987e5; --a3-bg:#152740; --a0:#a99a9b; --a0-bg:#2a2021;
   --focus:#6ea1ff;
+  --b-fora:#56494b; --b-uf:#a99a9b; --map-bg:#1b1213; --map-line:#3d2e30;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -138,10 +141,43 @@ footer p{margin:0}
 footer .resp{color:var(--ink);font-weight:700}
 footer .falta{color:var(--red-ink)}
 .loading{color:var(--ink-2);padding:12px 0}
+/* ---------- mapa ---------- */
+.mapa-sec{position:relative}
+.mapa-box{position:relative;height:min(62vh,460px);border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--map-bg)}
+#mapa{position:absolute;inset:0;background:var(--map-bg)}
+.mapa-sec.cheia{position:fixed;inset:0;z-index:1000;margin:0;border-radius:0;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px calc(env(safe-area-inset-bottom,0px) + 10px)}
+.mapa-sec.cheia .mapa-box{flex:1;height:auto}
+.mapa-sec.cheia .so-inline{display:none}
+.trilha{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:15px;margin:0 0 8px}
+.trilha button{font:inherit;font-weight:700;color:var(--red-ink);background:none;border:0;padding:4px 2px;cursor:pointer;min-height:36px}
+.trilha span{color:var(--ink-2)}
+.mapa-acoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.mapa-acoes .btn{flex:1 1 auto;min-height:46px;font-size:16px}
+.legenda{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px;color:var(--ink-2);margin-top:8px}
+.legenda .sw{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.legenda svg{vertical-align:middle}
+.dica{font-size:13px;color:var(--ink-2);margin:6px 0 0}
+.leaflet-container{background:var(--map-bg);font:inherit}
+.leaflet-bar a,.leaflet-bar a:hover{background:var(--card);color:var(--ink);border-bottom-color:var(--line)}
+.leaflet-control-attribution{background:color-mix(in srgb,var(--card) 85%,transparent)!important;color:var(--ink-2)!important;font-size:11px}
+.leaflet-control-attribution a{color:var(--ink-2)!important}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--card);color:var(--ink);box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.leaflet-popup-content{margin:12px 14px;font-size:15px;line-height:1.4;min-width:200px}
+.leaflet-container a.leaflet-popup-close-button{color:var(--ink-2);width:32px;height:32px;font-size:22px}
+.pop h4{margin:0 26px 2px 0;font-size:17px;line-height:1.25}
+.pop .s{font-size:13px;color:var(--ink-2)}
+.pop .m{margin-top:6px;font-variant-numeric:tabular-nums}
+.pop .chip{margin-top:6px}
+.pop .bts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pop .bts a,.pop .bts button{font:inherit;font-size:14px;font-weight:800;padding:8px 10px;border-radius:10px;border:2px solid var(--red);background:var(--card);color:var(--ink);text-decoration:none;cursor:pointer;min-height:40px;display:inline-flex;align-items:center}
+.pop .bts .cheio{background:var(--red);color:var(--on-red)}
+.pop .aprox{font-size:12px;color:var(--ink-2);font-style:italic}
 a{color:var(--red-ink)}
 [hidden]{display:none!important}
 @media (min-width:600px){ .hero h1{font-size:46px} .selo{width:112px;height:112px} .selo .n{font-size:48px} }
 </style>
+<link rel="stylesheet" href="vendor/leaflet.css">
+<script src="vendor/leaflet.js" defer></script>
 </head>
 <body>
 <div class="hero">
@@ -162,6 +198,18 @@ a{color:var(--red-ink)}
     <input type="search" id="q" placeholder="Digite o nome da cidade" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="search" aria-describedby="hint" aria-controls="sug">
     <ul class="sug" id="sug" role="listbox" aria-label="Cidades encontradas"></ul>
     <p class="hint" id="hint">Ex.: Feira de Santana, Campinas, Belém. Depois, veja os locais de votação.</p>
+  </section>
+
+  <section class="card mapa-sec" id="sec-mapa" aria-labelledby="h-mapa">
+    <h2 id="h-mapa" class="so-inline">Mapa: onde estão os votos em jogo</h2>
+    <nav class="trilha" id="trilha" aria-label="Nível do mapa"></nav>
+    <div class="mapa-box"><div id="mapa" role="application" aria-label="Mapa com bolhas de votos em jogo"></div></div>
+    <div class="legenda" id="legenda"></div>
+    <p class="dica so-inline" id="dica"></p>
+    <div class="mapa-acoes">
+      <button class="btn" type="button" id="bt-cheia">Tela cheia</button>
+      <button class="btn" type="button" id="bt-lista">Ver em lista</button>
+    </div>
   </section>
 
   <section class="card" id="resultado" hidden aria-live="polite"></section>
@@ -337,6 +385,7 @@ function escolhe(c){
     r.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x===b));
     ["locais","perfil","fed"].forEach(p => $("#p-"+p).hidden = p !== b.dataset.p); };
   r.scrollIntoView({behavior:"smooth", block:"start"});
+  if(!c._doMapa && window.MAPA) MAPA.cidade(c, true);
   carrega(c.arq).then(d => {
     const m = d[c.id]; if(!m) throw new Error("sem dados");
     $("#p-locais").innerHTML = locaisHTML(c, m);
@@ -480,6 +529,207 @@ $("#uf").innerHTML = `<option value="">Brasil (todos os estados)</option>` + Obj
 $("#uf").onchange = () => lista();
 $("#mais").onclick = () => { limite += 30; lista(false); };
 $("#ver-peq").onclick = () => { porteSel = "peq"; desenhaPorte(); lista(); $("#h-onde").scrollIntoView({behavior:"smooth"}); };
+
+
+// ======================================================================= MAPA
+// Níveis: Brasil (bolha por UF) → estado (bolha por município) → cidade (bairros nas grandes; locais de votação).
+// Área da bolha proporcional aos votos em jogo (raio ∝ raiz quadrada), escala relativa a cada nível.
+(function(){
+  const NIVEL_UF = 5.5, NIVEL_CIDADE = 10, NIVEL_LOCAIS = 13;
+  const toque = matchMedia("(pointer: coarse)").matches;
+  const cor = k => css(k);
+  const COR_ACAO = a => a ? cor(`--a${a}`) : cor("--b-fora");
+  const cacheUF = new Map();
+  let map, rend, rendC, camContorno, camBolhas, camUFs, ufsGeo, est = {nivel:"br", uf:null, cid:null}, prog = false, vmaxAtual = 1;
+
+  function css(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  const raio = (v, vmax, rmax, rmin=3) => Math.max(rmin, rmax * Math.sqrt(Math.max(0, v) / Math.max(1, vmax)));
+  const dentro = (pt, poly) => { let c = false; for(let i=0, j=poly.length-1; i<poly.length; j=i++){ const [xi,yi]=poly[i],[xj,yj]=poly[j];
+      if(((yi>pt[1])!==(yj>pt[1])) && (pt[0] < (xj-xi)*(pt[1]-yi)/(yj-yi)+xi)) c=!c; } return c; };
+  function ufNoPonto(lat, lon){
+    if(!ufsGeo) return null;
+    for(const f of ufsGeo.features) for(const p of f.geometry.coordinates) if(dentro([lon,lat], p[0])) return f.properties.id;
+    return null;
+  }
+  const ir = (fn) => { prog = true; fn(); setTimeout(()=>prog=false, 900); };
+  const pctTxt = (a,b) => a>=0 ? `Lula ${pct10(a)} → ${pct10(b)}` : (b>=0 ? `Lula ${pct10(b)} no 1º turno` : "");
+
+  function trilha(){
+    const t = $("#trilha"), p = [`<button type="button" data-n="br">Brasil</button>`];
+    if(est.uf) p.push(`<span>›</span><button type="button" data-n="uf">${esc(UFN[est.uf]||est.uf)}</button>`);
+    if(est.cid) p.push(`<span>›</span><span>${esc(est.cid.nome)}</span>`);
+    t.innerHTML = p.join("");
+  }
+  $("#trilha").onclick = e => { const b = e.target.closest("button"); if(!b) return;
+    if(b.dataset.n==="br") brasil(true); else if(b.dataset.n==="uf") estado(est.uf, true); };
+
+  function legenda(tipo, vmax){
+    const ref = vmax >= 1 ? [vmax, vmax/4] : [];
+    const circ = ref.map(v => { const r = raio(v, vmax, 12, 2); return `<svg width="${2*r+2}" height="${2*r+2}" aria-hidden="true"><circle cx="${r+1}" cy="${r+1}" r="${r}" fill="none" stroke="${cor("--ink-2")}" stroke-width="1.5"/></svg> ${redondo(v)}`; }).join(" &nbsp; ");
+    let cores = "";
+    if(tipo !== "br") cores = [1,2,3].map(a => `<span><span class="sw" style="background:${COR_ACAO(a)}"></span>${ACAO_LOCAL[a]}</span>`).join("") +
+      `<span><span class="sw" style="background:${cor("--b-fora")}"></span>${tipo==="uf"?"Fora das prioritárias":"Acompanhar / amostra pequena"}</span>`;
+    $("#legenda").innerHTML = `<span><b>Tamanho</b> = votos em jogo: ${circ}</span>` + (cores ? `<span style="flex-basis:100%"><b>Cor</b> = o que fazer:</span>${cores}` : `<span>Toque num estado para ver as cidades.</span>`);
+  }
+
+  function limpa(){ camBolhas.clearLayers(); }
+  function bolha(lat, lon, r, fill, extra={}){
+    return L.circleMarker([lat, lon], {renderer:rend, radius:r, fillColor:fill, fillOpacity:.78, color:cor("--card"), weight:1, ...extra});
+  }
+
+  // ---------------- Brasil
+  function brasil(fit){
+    est = {nivel:"br", uf:null, cid:null}; trilha(); limpa(); camContorno.clearLayers();
+    const ufs = Object.entries(DADOS.ufs); const vmax = Math.max(...ufs.map(u=>u[1][0]));
+    ufs.sort((a,b)=>b[1][0]-a[1][0]).forEach(([uf,[jogo,lon,lat,np,jp]]) => {
+      bolha(lat, lon, raio(jogo, vmax, 34, 5), cor("--b-uf"), {fillOpacity:.55}).bindPopup(() =>
+        `<div class="pop"><h4>${esc(UFN[uf])}</h4><div class="m"><b>${cerca(jogo)}</b> votos em jogo</div>
+         <div class="s">${np} cidades prioritárias, com ${cerca(jp)} votos em jogo</div>
+         <div class="bts"><button type="button" class="cheio" data-uf="${uf}">Ver cidades</button></div></div>`, {maxWidth:260, autoPanPadding:[30,30]}).addTo(camBolhas);
+    });
+    legenda("br", vmax);
+    if(fit) ir(() => map.fitBounds([[-33.8,-73.9],[5.3,-34.8]]));
+  }
+
+  // ---------------- Estado
+  async function estado(uf, fit){
+    est = {nivel:"uf", uf, cid:null}; trilha(); limpa(); map.closePopup();
+    const cid = UNICAS.filter(c => c.uf===uf && c.lat!=null).sort((a,b)=>b.jogo-a.jogo);
+    const vmax = Math.max(1, ...cid.map(c=>c.jogo));
+    cid.forEach(c => {
+      bolha(c.lat, c.lon, raio(c.jogo, vmax, 26, 2.5), COR_ACAO(c.acao), {fillOpacity:c.acao?.85:.6}).bindPopup(() =>
+        `<div class="pop"><h4>${esc(c.nome)}</h4><div class="s">${esc(UFN[c.uf])}</div>
+         <div class="m"><b>${cerca(c.jogo)}</b> votos em jogo</div><div class="m">${pctTxt(c.pv22,c.pv26)}</div>
+         ${c.acao ? `<span class="chip t${c.acao}">${ACOES[c.acao].nome}</span>` : `<div class="s" style="margin-top:6px">Fora das prioritárias</div>`}
+         <div class="bts"><button type="button" class="cheio" data-cid="${c.id}">Ver locais no mapa</button><button type="button" data-cartao="${c.id}">Abrir cartão</button></div></div>`, {maxWidth:260, autoPanPadding:[30,30]}).addTo(camBolhas);
+    });
+    legenda("uf", vmax);
+    if(fit){ const f = ufsGeo && ufsGeo.features.find(x=>x.properties.id===uf); if(f) ir(() => map.fitBounds(L.geoJSON(f).getBounds(), {padding:[10,10]})); }
+    contornos(uf);
+  }
+  async function contornos(uf){
+    try{
+      if(!cacheUF.has(uf)) cacheUF.set(uf, fetch(`mapa/mun_${uf}.json`).then(r=>r.json()));
+      const g = await cacheUF.get(uf); if(est.uf !== uf) return;
+      camContorno.clearLayers();
+      L.geoJSON(g, {renderer:rendC, pane:"contornos", interactive:false, style:{color:cor("--map-line"), weight:.7, fill:false}}).addTo(camContorno);
+    }catch(e){ cacheUF.delete(uf); }
+  }
+
+  // ---------------- Cidade
+  async function cidade(c, fit){
+    if(!c) return;
+    est = {nivel:"cidade", uf:c.uf, cid:c}; trilha(); map.closePopup();
+    contornos(c.uf);
+    let m; try{ m = (await carrega(c.arq))[c.id]; }catch(e){ return; }
+    if(est.cid !== c || !m) return;
+    c._m = m;
+    if(fit){ const pts = m.locais.map(l => [l[10], l[11]]).filter(p=>p[0]!=null); if(pts.length) ir(() => map.fitBounds(pts, {padding:[24,24], maxZoom:15})); }
+    setTimeout(desenhaCidade, fit ? 350 : 0);
+  }
+  function desenhaCidade(){
+    const c = est.cid; if(!c || !c._m) return; const m = c._m; limpa();
+    const usarBairros = m.grande && map.getZoom() < NIVEL_LOCAIS;
+    if(usarBairros){
+      const vmax = Math.max(1, ...m.bairros.map(b=>b[6]));
+      m.bairros.map((b,k)=>[b,k]).sort((x,y)=>y[0][6]-x[0][6]).forEach(([b,k]) => {
+        const [nome, n, aptos, pv22, pv26, abs, jogo, acao, lat, lon] = b;
+        bolha(lat, lon, raio(jogo, vmax, 22, 3), COR_ACAO(acao)).bindPopup(() =>
+          `<div class="pop"><h4>${esc(nome)}</h4><div class="s">Bairro · ${n} ${n===1?"local":"locais"} de votação · ${nf0.format(aptos)} eleitores</div>
+           <div class="m"><b>${cerca(jogo)}</b> votos em jogo</div><div class="m">${pctTxt(pv22,pv26)} · abstenção ${pct10(abs)}</div>
+           ${acao ? `<span class="chip t${acao}">${ACAO_LOCAL[acao]}</span>` : ""}
+           <div class="bts"><button type="button" class="cheio" data-bairro="${k}">Ver locais do bairro</button></div></div>`, {maxWidth:260, autoPanPadding:[30,30]}).addTo(camBolhas);
+      });
+      legenda("cid", vmax);
+    } else {
+      const ls = m.locais.filter(l => l[10]!=null);
+      const vmax = Math.max(1, ...ls.filter(l=>!(l[9]&1)).map(l=>l[7]));
+      ls.slice().sort((a,b)=>b[7]-a[7]).forEach(l => {
+        const peq = l[9] & 1;
+        bolha(l[10], l[11], peq ? 3 : raio(l[7], vmax, 20, 3), peq ? cor("--b-fora") : COR_ACAO(l[8])).bindPopup(() => popLocal(l, m), {maxWidth:270, autoPanPadding:[30,30]}).addTo(camBolhas);
+      });
+      legenda("cid", vmax);
+    }
+  }
+  function comoChegar(lat, lon){
+    const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+    return ios ? `https://maps.apple.com/?daddr=${lat},${lon}` : `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
+  }
+  function popLocal(l, m){
+    const [nome, end, b, aptos, pv22, pv26, abs, jogo, acao, fl, lat, lon] = l;
+    const bairro = m.grande ? (m.bairros[b]?.[0] || "") : b;
+    const peq = fl & 1, novo = fl & 2, aprox = fl & 4;
+    const nums = peq ? `<div class="m">Amostra pequena (${nf0.format(aptos)} eleitores): sem percentuais.</div>`
+      : `<div class="m"><b>${cerca(jogo)}</b> votos em jogo</div><div class="m">${pctTxt(pv22,pv26)} · abstenção ${pct10(abs)}</div>${novo?`<div class="s">Local novo: sem comparação com 2022</div>`:""}`;
+    return `<div class="pop"><h4>${esc(nome)}</h4><div class="s">${esc(end)}${bairro?" · "+esc(bairro):""}</div>${nums}
+      ${acao && !peq ? `<span class="chip t${acao}">${ACAO_LOCAL[acao]}</span>` : ""}
+      ${aprox ? `<div class="aprox">Posição aproximada (sem coordenada no cadastro do TSE)</div>` : ""}
+      <div class="bts"><a class="cheio" href="${comoChegar(lat,lon)}" target="_blank" rel="noopener">Como chegar</a></div></div>`;
+  }
+
+  // ---------------- transições por zoom
+  function aoMover(){
+    if(prog) return;
+    const z = map.getZoom(), ctr = map.getCenter();
+    if(z < NIVEL_UF){ if(est.nivel !== "br") brasil(false); return; }
+    const uf = ufNoPonto(ctr.lat, ctr.lng);
+    if(est.nivel === "br" && uf){ estado(uf, false); return; }
+    if(est.nivel === "uf" && uf && uf !== est.uf){ estado(uf, false); return; }
+    if(est.nivel === "uf" && z >= NIVEL_CIDADE){
+      const perto = UNICAS.filter(c => c.uf===est.uf && c.lat!=null).map(c => ({c, d:(c.lat-ctr.lat)**2+(c.lon-ctr.lng)**2})).sort((a,b)=>a.d-b.d)[0];
+      if(perto && perto.d < 0.09) { cidade(perto.c, false); return; }
+    }
+    if(est.nivel === "cidade"){
+      if(z < NIVEL_CIDADE - 1){ estado(uf || est.uf, false); return; }
+      if(est.cid && est.cid._m && est.cid._m.grande) desenhaCidade();
+    }
+  }
+
+  // ---------------- tela cheia, lista, cliques nos popups
+  function cheia(on){
+    const sec = $("#sec-mapa"); sec.classList.toggle("cheia", on); document.body.style.overflow = on ? "hidden" : "";
+    $("#bt-cheia").textContent = on ? "Fechar mapa" : "Tela cheia";
+    if(toque){ on ? map.dragging.enable() : map.dragging.disable(); }
+    setTimeout(()=>map.invalidateSize(), 60);
+  }
+  $("#bt-cheia").onclick = () => cheia(!$("#sec-mapa").classList.contains("cheia"));
+  $("#bt-lista").onclick = () => { if($("#sec-mapa").classList.contains("cheia")) cheia(false);
+    if(est.cid){ escolheSemMapa(est.cid); return; }
+    if(est.uf){ $("#uf").value = est.uf; lista(); } $("#h-onde").scrollIntoView({behavior:"smooth"}); };
+  function escolheSemMapa(c){ c._doMapa = true; escolhe(c); c._doMapa = false; }
+  document.getElementById("mapa").addEventListener("click", e => {
+    const b = e.target.closest("button"); if(!b) return;
+    if(b.dataset.uf) estado(b.dataset.uf, true);
+    else if(b.dataset.cid) cidade(UNICAS.find(x=>x.id===b.dataset.cid), true);
+    else if(b.dataset.cartao){ if($("#sec-mapa").classList.contains("cheia")) cheia(false); escolheSemMapa(UNICAS.find(x=>x.id===b.dataset.cartao)); }
+    else if(b.dataset.bairro != null && est.cid && est.cid._m){
+      const k = +b.dataset.bairro, pts = est.cid._m.locais.filter(l => l[2]===k && l[10]!=null).map(l=>[l[10],l[11]]);
+      map.closePopup();
+      if(pts.length) map.fitBounds(pts, {padding:[30,30], maxZoom:16}); if(map.getZoom() < NIVEL_LOCAIS) map.setZoom(NIVEL_LOCAIS);
+    }
+  });
+
+  function init(){
+    if(!window.L){ $("#dica").textContent = "Não foi possível carregar o mapa. Use a busca e as listas abaixo."; return; }
+    map = L.map("mapa", {preferCanvas:true, zoomSnap:.5, minZoom:3, maxZoom:17, dragging:!toque, tap:false, worldCopyJump:false, attributionControl:true});
+    map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+    map.attributionControl.addAttribution("Malhas: IBGE · Locais e resultados: TSE");
+    map.createPane("contornos").style.zIndex = 350;   // contornos sempre abaixo das bolhas
+    rendC = L.canvas({pane:"contornos", padding:.3});
+    rend = L.canvas({padding:.3, tolerance:toque?8:3});
+    camUFs = L.layerGroup().addTo(map); camContorno = L.layerGroup().addTo(map); camBolhas = L.layerGroup().addTo(map);
+    map.fitBounds([[-33.8,-73.9],[5.3,-34.8]], {padding:[4,4]});
+    $("#dica").textContent = toque ? "Use dois dedos para aproximar o mapa. Para arrastar à vontade, toque em Tela cheia." : "Use a roda do mouse ou os botões + e − para aproximar.";
+    fetch("mapa/ufs.json").then(r=>r.json()).then(g => { ufsGeo = g;
+      L.geoJSON(g, {renderer:rendC, pane:"contornos", style:{color:cor("--map-line"), weight:1.2, fillColor:cor("--card"), fillOpacity:1},
+        onEachFeature:(f, lyr) => lyr.on("click", () => { if(est.nivel==="br") estado(f.properties.id, true); })}).addTo(camUFs);
+    }).catch(()=>{});
+    brasil(false);
+    map.on("zoomend moveend", aoMover);
+    window.MAPA = {cidade, estado, brasil, _map: map, _est: () => est};
+  }
+  if(document.readyState === "complete") init(); else addEventListener("load", init);
+})();
 
 aplicaMarca(); topo(); desenhaPorte(); lista();
 (function(){

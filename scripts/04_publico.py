@@ -118,6 +118,33 @@ L["nome"] = L.NM_LOCAL_VOTACAO.map(titulo)
 L["end"] = L.DS_ENDERECO.map(titulo)
 L.loc[L.nome == "", "nome"] = "Local " + L.NR_LOCAL_VOTACAO.astype(str) + " (zona " + L.NR_ZONA.astype(str) + ")"
 
+# ---------------------------------------------------------------- coordenadas (cadastro do TSE)
+num_br = lambda s: pd.to_numeric(s.astype(str).str.replace(",", ".", regex=False), errors="coerce")
+L["lat"], L["lon"] = num_br(L.NR_LATITUDE), num_br(L.NR_LONGITUDE)
+okc = L.lat.between(-34, 6) & L.lon.between(-75, -28) & (L.lat != -1)
+L.loc[~okc, ["lat", "lon"]] = np.nan
+L["aprox"] = ~okc
+# sem coordenada: ponto médio dos locais do mesmo bairro; senão, ponto médio dos locais do município; senão, centro do município
+for chave in (["id", "bairro"], ["id"]):
+    med = L.groupby(chave)[["lat", "lon"]].transform("mean")
+    L["lat"] = L.lat.fillna(med.lat)
+    L["lon"] = L.lon.fillna(med.lon)
+
+cent = {}  # centro aproximado do município (caixa do maior polígono), último recurso
+for f in geo["features"]:
+    i = f["properties"]["id"]
+    polys = f["geometry"]["coordinates"] if f["geometry"]["type"] == "MultiPolygon" else [f["geometry"]["coordinates"]]
+    ring = max((p[0] for p in polys), key=len)
+    xs, ys = [c[0] for c in ring], [c[1] for c in ring]
+    cent.setdefault(i, (round((min(xs) + max(xs)) / 2, 4), round((min(ys) + max(ys)) / 2, 4)))
+L["lat"] = L.lat.fillna(L.id.map(lambda i: cent.get(i, (np.nan, np.nan))[1]))
+L["lon"] = L.lon.fillna(L.id.map(lambda i: cent.get(i, (np.nan, np.nan))[0]))
+print(f"coordenadas: {okc.mean():.1%} dos locais com ponto do TSE; demais com posição aproximada")
+# ponto da bolha do município: média dos locais ponderada pelo eleitorado (onde as pessoas votam)
+_w = L.aptos_26.clip(lower=1)
+ponto_mun = (L.assign(wl=L.lat * _w, wo=L.lon * _w, w=_w).groupby("id")[["wl", "wo", "w"]].sum())
+ponto_mun = {i: (round(r.wo / r.w, 3), round(r.wl / r.w, 3)) for i, r in ponto_mun.iterrows()}
+
 # conferência: soma dos locais = município da análise
 chk = L.groupby("id")[["aptos_26", "lula_26", "adv_26"]].sum().join(mun.set_index("id")[["aptos_26", "lula_26", "adv_26"]], rsuffix="_a")
 dif = chk[(chk.aptos_26 != chk.aptos_26_a) | (chk.lula_26 != chk.lula_26_a) | (chk.adv_26 != chk.adv_26_a)]
@@ -185,15 +212,19 @@ for i, g in L.groupby("id"):
         b = metricas(b, m.abs_hist).sort_values("pot", ascending=False)
         for k, (nome, r) in enumerate(b.iterrows()):
             bidx[nome] = k
-            bairros.append([nome or "Sem bairro", int(g[g.bairro == nome].shape[0]), int(r.aptos_26), r10(r.pv22),
-                            r10(r.pv26), r10(r.abs26), int(round(r.jogo)), int(r.acao)])
+            gb = g[g.bairro == nome]
+            wb = gb.aptos_26.clip(lower=1)
+            bairros.append([nome or "Sem bairro", int(gb.shape[0]), int(r.aptos_26), r10(r.pv22),
+                            r10(r.pv26), r10(r.abs26), int(round(r.jogo)), int(r.acao),
+                            round(float((gb.lat * wb).sum() / wb.sum()), 4), round(float((gb.lon * wb).sum() / wb.sum()), 4)])
     locais = []
     for r in g.itertuples():
         peq = r.aptos_26 < AMOSTRA_PEQUENA
         novo = not r.comparavel
         locais.append([r.nome, r.end, bidx.get(r.bairro, r.bairro) if grande else r.bairro, int(r.aptos_26),
                        -1 if peq else r10(r.pv22), -1 if peq else r10(r.pv26), -1 if peq else r10(r.abs26),
-                       int(round(r.jogo)), int(r.acao), (1 if peq else 0) | (2 if novo else 0)])
+                       int(round(r.jogo)), int(r.acao), (1 if peq else 0) | (2 if novo else 0) | (4 if r.aprox else 0),
+                       round(float(r.lat), 4), round(float(r.lon), 4)])
     fam = bf_ult.loc[i] if i in bf_ult.index else None
     perfil = {k: r1(m[k]) for k in PERFIL}
     perfil["pop"] = int(m["pop"]) if np.isfinite(m["pop"]) else None
@@ -244,17 +275,10 @@ for k, v in pacotes.items():
 (OUTD / "checagem.json").write_text(json.dumps(checagem, ensure_ascii=False, default=float))
 
 # ---------------------------------------------------------------- índice (embutido na página)
-cent = {}
-for f in geo["features"]:
-    i = f["properties"]["id"]
-    polys = f["geometry"]["coordinates"] if f["geometry"]["type"] == "MultiPolygon" else [f["geometry"]["coordinates"]]
-    ring = max((p[0] for p in polys), key=len)
-    xs, ys = [c[0] for c in ring], [c[1] for c in ring]
-    cent.setdefault(i, (round((min(xs) + max(xs)) / 2, 2), round((min(ys) + max(ys)) / 2, 2)))
 
 idx = []
 for r in mun.itertuples():
-    lon, lat = cent.get(r.id, (None, None))
+    lon, lat = ponto_mun.get(r.id, cent.get(r.id, (None, None)))
     row = [r.id, r.nome, r.uf, ACAO.get(r.seg, 0), int(round(r.estoque)), lon, lat, porte(r.aptos_26),
            r10(r.pv_l22), r10(r.pv_l26), int(r.d_lula), arquivo[r.id] if arquivo[r.id] != r.uf else 0]
     idx.append(row)
@@ -277,6 +301,90 @@ pub = {
     "bf_periodo": [PRI, ULT], "pdm_mes": fed_meta["pdm_mes"], "mm_ref": fed_meta["mm_referencia"], "media_uf": media_uf, "portes": PORTES,
     "cidades": idx,
 }
+# ---------------------------------------------------------------- mapa: contornos (IBGE) simplificados e bolhas por UF
+MAPA = PUB / "mapa"
+MAPA.mkdir(exist_ok=True)
+
+
+def rdp(pts, tol):
+    """Douglas-Peucker iterativo (graus)."""
+    if len(pts) < 4:
+        return pts
+    keep = [False] * len(pts)
+    keep[0] = keep[-1] = True
+    pilha = [(0, len(pts) - 1)]
+    while pilha:
+        a, b = pilha.pop()
+        (x1, y1), (x2, y2) = pts[a], pts[b]
+        dx, dy = x2 - x1, y2 - y1
+        n2 = dx * dx + dy * dy or 1e-18
+        dm, im = -1, -1
+        for k in range(a + 1, b):
+            x, y = pts[k]
+            t = max(0, min(1, ((x - x1) * dx + (y - y1) * dy) / n2))
+            d = (x - x1 - t * dx) ** 2 + (y - y1 - t * dy) ** 2
+            if d > dm:
+                dm, im = d, k
+        if dm > tol * tol:
+            keep[im] = True
+            pilha += [(a, im), (im, b)]
+    return [p for p, k in zip(pts, keep) if k]
+
+
+def simplifica(feats, tol, nd):
+    out = []
+    for f in feats:
+        g = f["geometry"]
+        polys = g["coordinates"] if g["type"] == "MultiPolygon" else [g["coordinates"]]
+        novos = []
+        for poly in polys:
+            aneis = [[[round(x, nd), round(y, nd)] for x, y in rdp(ring, tol)] for ring in poly[:1]]  # só o anel externo
+            if len(aneis[0]) >= 4:
+                novos.append(aneis)
+        if novos:
+            out.append({"type": "Feature", "properties": f["properties"],
+                        "geometry": {"type": "MultiPolygon", "coordinates": novos}})
+    return {"type": "FeatureCollection", "features": out}
+
+
+geo_ufs = json.loads((DATA / "geo_ufs.json").read_text())
+(MAPA / "ufs.json").write_text(json.dumps(simplifica(geo_ufs["features"], 0.02, 2), separators=(",", ":")))
+UFCOD = {"11": "RO", "12": "AC", "13": "AM", "14": "RR", "15": "PA", "16": "AP", "17": "TO", "21": "MA", "22": "PI",
+         "23": "CE", "24": "RN", "25": "PB", "26": "PE", "27": "AL", "28": "SE", "29": "BA", "31": "MG", "32": "ES",
+         "33": "RJ", "35": "SP", "41": "PR", "42": "SC", "43": "RS", "50": "MS", "51": "MT", "52": "GO", "53": "DF"}
+por_uf = {}
+for f in geo["features"]:
+    por_uf.setdefault(UFCOD[f["properties"]["id"][:2]], []).append(f)
+tam_mapa = {}
+for uf, fs in por_uf.items():
+    p = MAPA / f"mun_{uf}.json"
+    p.write_text(json.dumps(simplifica(fs, 0.012, 3), separators=(",", ":")))
+    tam_mapa[uf] = p.stat().st_size
+
+
+def centroide(feat):
+    polys = feat["geometry"]["coordinates"] if feat["geometry"]["type"] == "MultiPolygon" else [feat["geometry"]["coordinates"]]
+    r = max((p[0] for p in polys), key=len)
+    a = cx = cy = 0.0
+    for (x1, y1), (x2, y2) in zip(r, r[1:]):
+        c = x1 * y2 - x2 * y1
+        a += c
+        cx += (x1 + x2) * c
+        cy += (y1 + y2) * c
+    return round(cx / (3 * a), 2), round(cy / (3 * a), 2)
+
+
+uf_tab = pd.DataFrame(json.loads((DATA / "ufs.json").read_text())["rows"], columns=json.loads((DATA / "ufs.json").read_text())["cols"]).set_index("uf")
+ufs_mapa = {}
+for f in geo_ufs["features"]:
+    uf = f["properties"]["id"]
+    lon, lat = centroide(f)
+    prio = mun[(mun.uf == uf) & mun.seg.isin(ACAO)]
+    ufs_mapa[uf] = [int(round(uf_tab.loc[uf, "estoque"])), lon, lat, int(len(prio)), int(round(prio.estoque.sum()))]
+pub["ufs"] = ufs_mapa
+print(f"mapa: ufs.json {(MAPA / 'ufs.json').stat().st_size / 1e3:.0f} KB | contornos municipais por UF: maior "
+      f"{max(tam_mapa, key=tam_mapa.get)} {max(tam_mapa.values()) / 1e3:.0f} KB, total {sum(tam_mapa.values()) / 1e6:.1f} MB")
+
 tpl = (PUB / "template.html").read_text()
 html = tpl.replace("/*__DADOS__*/null", json.dumps(pub, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/"))
 (PUB / "index.html").write_text(html)
