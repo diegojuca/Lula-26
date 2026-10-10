@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Onde seu voto vira mais votos</title>
+<meta name="description" content="Encontre sua cidade e veja o que fazer até o 2º turno de 25 de outubro.">
+<style>
+/* Layout: uma coluna, busca primeiro; resultado em cartão; listas em linhas grandes e tocáveis. */
+:root{
+  color-scheme:light;
+  --bg:#f7f8fa; --card:#ffffff; --ink:#111418; --ink-2:#4a5260; --line:#dde1e7; --field:#ffffff;
+  --brand:#b4232a;            /* destaque da página (configurável em MARCA abaixo) */
+  --a1:#0a7a3d; --a1-bg:#e6f4ec;   /* Levar para votar */
+  --a2:#c2410c; --a2-bg:#fdeee6;   /* Conversar com quem mudou */
+  --a3:#1d4ed8; --a3-bg:#e8eefc;   /* Disputar bairro a bairro */
+  --a0:#5b6472; --a0-bg:#eef0f3;   /* fora das prioritárias */
+  --focus:#1d4ed8;
+  --f-ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0f1115; --card:#181b21; --ink:#f2f4f7; --ink-2:#b3bac6; --line:#2b313b; --field:#11141a;
+    --brand:#ff6b6b;
+    --a1:#3ccf7f; --a1-bg:#123322; --a2:#ff8a4c; --a2-bg:#3a2216; --a3:#7aa2ff; --a3-bg:#18244a; --a0:#a3acb9; --a0-bg:#252a33;
+    --focus:#7aa2ff;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0f1115; --card:#181b21; --ink:#f2f4f7; --ink-2:#b3bac6; --line:#2b313b; --field:#11141a;
+  --brand:#ff6b6b;
+  --a1:#3ccf7f; --a1-bg:#123322; --a2:#ff8a4c; --a2-bg:#3a2216; --a3:#7aa2ff; --a3-bg:#18244a; --a0:#a3acb9; --a0-bg:#252a33;
+  --focus:#7aa2ff;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 var(--f-ui)}
+.wrap{max-width:640px;margin:0 auto;padding-inline:16px;padding-block:18px 40px;display:flex;flex-direction:column;gap:22px}
+.eyebrow{font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--brand);margin:0}
+h1{font-size:30px;line-height:1.15;margin:4px 0 10px;letter-spacing:-.02em;text-wrap:balance}
+.lead{font-size:18px;margin:0;color:var(--ink)}
+.lead b{white-space:nowrap}
+h2{font-size:21px;line-height:1.25;margin:0 0 10px;text-wrap:balance}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+label.big{display:block;font-size:21px;font-weight:750;margin-bottom:8px}
+.search{position:relative}
+input[type=search]{width:100%;font:inherit;font-size:19px;padding:14px 14px;border-radius:12px;border:2px solid var(--line);background:var(--field);color:var(--ink);-webkit-appearance:none;appearance:none}
+input[type=search]:focus{outline:none;border-color:var(--focus)}
+.sug{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.sug button{width:100%;text-align:left;font:inherit;font-size:18px;min-height:52px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--field);color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}
+.sug button span:last-child{color:var(--ink-2);font-size:15px;font-weight:600}
+.hint{font-size:15px;color:var(--ink-2);margin:8px 0 0}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.res-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.res-head h2{margin:0}
+.res-head .uf{color:var(--ink-2);font-weight:700}
+.acao{display:flex;align-items:flex-start;gap:12px;margin-top:12px;padding:14px;border-radius:14px;background:var(--acao-bg);border-left:6px solid var(--acao)}
+.acao .nome{font-size:21px;font-weight:800;color:var(--ink);line-height:1.2}
+.acao .nome .ico{display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--acao);color:var(--card);align-items:center;justify-content:center;font-size:16px;margin-right:8px;vertical-align:-6px;font-weight:900}
+.acao p{margin:6px 0 0;font-size:17px}
+.numero{margin:14px 0 0;font-size:17px}
+.numero b{font-size:30px;display:block;line-height:1.1;letter-spacing:-.01em}
+.t1{--acao:var(--a1);--acao-bg:var(--a1-bg)} .t2{--acao:var(--a2);--acao-bg:var(--a2-bg)} .t3{--acao:var(--a3);--acao-bg:var(--a3-bg)} .t0{--acao:var(--a0);--acao-bg:var(--a0-bg)}
+.zonas{margin-top:16px}
+.zonas h3,.perto h3{font-size:18px;margin:0 0 4px}
+.zonas .sub{font-size:14px;color:var(--ink-2);margin:0 0 8px}
+.zona{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:10px 0;border-top:1px solid var(--line)}
+.zona b{font-size:17px}
+.zona .q{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.zona .bairros{grid-column:1/-1;color:var(--ink-2);font-size:15px}
+.lista{list-style:none;margin:0;padding:0}
+.lista li{border-top:1px solid var(--line)}
+.lista li:first-child{border-top:0}
+.linha{width:100%;font:inherit;color:var(--ink);background:none;border:0;padding:12px 2px;display:grid;grid-template-columns:1fr auto;gap:4px 10px;text-align:left;cursor:pointer;min-height:56px;align-items:center}
+.linha .c{font-size:18px;font-weight:700;min-width:0}
+.linha .c small{font-weight:600;color:var(--ink-2);font-size:15px}
+.linha .q{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap;text-align:right}
+.linha .q small{display:block;font-weight:500;color:var(--ink-2);font-size:13px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700;padding:3px 10px 3px 6px;border-radius:99px;background:var(--acao-bg);color:var(--ink);grid-column:1/-1;justify-self:start}
+.chip::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--acao)}
+.acoes{display:flex;flex-direction:column;gap:10px}
+.acoes .acao{margin:0}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+select{font:inherit;font-size:18px;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--field);color:var(--ink);min-height:50px;max-width:100%}
+.btn{font:inherit;font-size:17px;font-weight:700;min-height:50px;padding:10px 16px;border-radius:12px;border:2px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer}
+.btn.full{width:100%}
+footer{font-size:14px;color:var(--ink-2);display:flex;flex-direction:column;gap:6px}
+footer p{margin:0}
+.marca{display:flex;align-items:center;gap:10px}
+.marca img{height:32px;width:auto}
+[hidden]{display:none!important}
+@media (min-width:600px){ h1{font-size:36px} }
+@media (prefers-reduced-motion:no-preference){ .card{transition:border-color .15s} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="marca" id="marca" hidden></div>
+    <p class="eyebrow">2º turno · domingo, 25 de outubro</p>
+    <h1 id="titulo">Onde seu voto vira mais votos</h1>
+    <p class="lead" id="lead"></p>
+  </header>
+
+  <section class="card" aria-labelledby="lbl-busca">
+    <label class="big" id="lbl-busca" for="q">Encontre sua cidade</label>
+    <div class="search">
+      <input type="search" id="q" placeholder="Digite o nome da cidade" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="search" aria-describedby="hint" aria-controls="sug">
+      <ul class="sug" id="sug" role="listbox" aria-label="Cidades encontradas"></ul>
+      <p class="hint" id="hint">Ex.: Feira de Santana, Campinas, Belém.</p>
+    </div>
+  </section>
+
+  <section class="card" id="resultado" hidden aria-live="polite"></section>
+
+  <section aria-labelledby="h-acoes">
+    <h2 id="h-acoes">O que fazer em cada tipo de cidade</h2>
+    <div class="acoes" id="acoes"></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-onde">
+    <h2 id="h-onde">Onde mais conta</h2>
+    <div class="row"><select id="uf" aria-label="Estado"></select></div>
+    <p class="hint" id="onde-hint" style="margin:0 0 6px"></p>
+    <ul class="lista" id="onde"></ul>
+    <button class="btn full" id="mais" hidden>Mostrar mais cidades</button>
+  </section>
+
+  <footer>
+    <p id="fonte"></p>
+    <p>A classificação de cada cidade é uma estimativa feita a partir dos resultados oficiais por cidade e por zona eleitoral. Não indica o voto de nenhuma pessoa.</p>
+    <p>“Votos em jogo” soma, no 1º turno, os votos em outros candidatos, os brancos e nulos e as ausências acima do normal da cidade.</p>
+  </footer>
+</div>
+
+<script>
+"use strict";
+// ======================= CONFIGURAÇÃO DE MARCA (único ponto) =======================
+// Para adicionar a marca da campanha ou do Tá Dito: preencha nome/logo e, se quiser, a cor.
+const MARCA = {
+  nome: "",          // ex.: "Tá Dito"
+  logo: "",          // URL https ou data:image/... (opcional)
+  corDestaque: "",   // ex.: "#b4232a" (vazio = cor padrão da página)
+  titulo: "Onde seu voto vira mais votos",
+};
+// ===================================================================================
+
+const DADOS = /*__DADOS__*/null;
+
+const ACOES = {
+  1:{nome:"Levar para votar", ico:"1", txt:"Aqui, muita gente que costuma votar em Lula não foi votar no 1º turno. Lembre a data (domingo, 25/10), combine carona e chame quem faltou."},
+  2:{nome:"Conversar com quem mudou", ico:"2", txt:"Muita gente aqui votou em Lula em 2022 e escolheu outro caminho no 1º turno. Converse com vizinhos, família e grupos, de porta em porta."},
+  3:{nome:"Disputar bairro a bairro", ico:"3", txt:"Cidade grande e dividida, onde cada bairro conta. Concentre a presença nas zonas e bairros abaixo."},
+};
+const UFN = {AC:"Acre",AL:"Alagoas",AM:"Amazonas",AP:"Amapá",BA:"Bahia",CE:"Ceará",DF:"Distrito Federal",ES:"Espírito Santo",GO:"Goiás",MA:"Maranhão",MG:"Minas Gerais",MS:"Mato Grosso do Sul",MT:"Mato Grosso",PA:"Pará",PB:"Paraíba",PE:"Pernambuco",PI:"Piauí",PR:"Paraná",RJ:"Rio de Janeiro",RN:"Rio Grande do Norte",RO:"Rondônia",RR:"Roraima",RS:"Rio Grande do Sul",SC:"Santa Catarina",SE:"Sergipe",SP:"São Paulo",TO:"Tocantins"};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+const nf = new Intl.NumberFormat("pt-BR",{maximumFractionDigits:1});
+
+// Número redondo e sem jargão: 2 algarismos significativos.
+function redondo(v){
+  if(v < 1000) return "menos de mil";
+  if(v >= 1e6){ const m = Math.round(v/1e5)/10; return nf.format(m) + (m < 2 ? " milhão" : " milhões"); }
+  const p = Math.pow(10, Math.floor(Math.log10(v)) - 1), r = Math.round(v/p)*p;
+  return nf.format(r/1000) + " mil";
+}
+const cerca = v => v < 1000 ? "menos de mil" : "cerca de " + redondo(v);
+
+// ----------------------------------------------------------------- dados
+const C = DADOS.cidades.map(r => ({id:r[0], nome:r[1], uf:r[2], acao:r[3], jogo:r[4], lon:r[5], lat:r[6], k:norm(r[1])}));
+const PERTO_MIN = 5000; // sugestões "perto de você": só prioritárias com pelo menos 5 mil votos em jogo
+const PRIO = C.filter((c,i,a) => c.acao && a.findIndex(x=>x.id===c.id)===i).sort((a,b)=>b.jogo-a.jogo);
+
+function aplicaMarca(){
+  if(MARCA.corDestaque) document.documentElement.style.setProperty("--brand", MARCA.corDestaque);
+  if(MARCA.titulo){ $("#titulo").textContent = MARCA.titulo; document.title = MARCA.titulo; }
+  if(MARCA.nome || MARCA.logo){ const m=$("#marca"); m.hidden=false;
+    m.innerHTML = (MARCA.logo?`<img src="${esc(MARCA.logo)}" alt="">`:"") + (MARCA.nome?`<strong>${esc(MARCA.nome)}</strong>`:""); }
+}
+
+function topo(){
+  const def = Math.round(DADOS.deficit/1e6), jogo = Math.floor(DADOS.jogo/1e6);
+  $("#lead").innerHTML = `No 1º turno, Lula ficou cerca de <b>${def} ${def===1?"milhão":"milhões"} de votos</b> atrás. Tem muito mais voto que isso em jogo: mais de <b>${jogo} milhões</b> de pessoas votaram em outros candidatos, votaram branco ou nulo, ou deixaram de votar.`;
+  const d = DADOS.gerado_1t26.split(" ")[0], ex = new Date(DADOS.extracao).toLocaleDateString("pt-BR");
+  $("#fonte").innerHTML = `Fonte: TSE, resultados oficiais do 1º turno de 2026 (totalização de ${d}, sujeita a atualização) e do 2º turno de 2022. Dados extraídos em ${ex}.`;
+  $("#acoes").innerHTML = [1,2,3].map(a => `<div class="acao t${a}"><div><div class="nome"><span class="ico" aria-hidden="true">${ACOES[a].ico}</span>${ACOES[a].nome}</div><p>${ACOES[a].txt}</p></div></div>`).join("");
+}
+
+// ----------------------------------------------------------------- busca
+let sugItems = [];
+function busca(){
+  const q = norm($("#q").value);
+  const ul = $("#sug");
+  if(q.length < 2){ ul.innerHTML = ""; $("#hint").hidden = false; return; }
+  const starts = [], has = [];
+  for(const c of C){ if(c.k.startsWith(q)) starts.push(c); else if(c.k.includes(q)) has.push(c); }
+  sugItems = starts.concat(has).slice(0, 8);
+  $("#hint").hidden = sugItems.length > 0;
+  if(!sugItems.length){ ul.innerHTML = `<li class="hint">Nenhuma cidade encontrada. Confira a grafia.</li>`; $("#hint").hidden = true; return; }
+  ul.innerHTML = sugItems.map((c,i) => `<li><button type="button" role="option" data-i="${i}"><span>${esc(c.nome)}</span><span>${c.uf}</span></button></li>`).join("");
+}
+$("#q").addEventListener("input", busca);
+$("#q").addEventListener("keydown", e => { if(e.key==="Enter" && sugItems[0]){ e.preventDefault(); escolhe(sugItems[0]); } });
+$("#sug").addEventListener("click", e => { const b = e.target.closest("button"); if(b) escolhe(sugItems[+b.dataset.i]); });
+
+function distKm(a, b){
+  const R=6371, t=Math.PI/180, dLa=(b.lat-a.lat)*t, dLo=(b.lon-a.lon)*t;
+  const h=Math.sin(dLa/2)**2 + Math.cos(a.lat*t)*Math.cos(b.lat*t)*Math.sin(dLo/2)**2; return 2*R*Math.asin(Math.sqrt(h));
+}
+
+function linhaCidade(c, extra=""){
+  const a = ACOES[c.acao];
+  return `<li><button class="linha t${c.acao}" type="button" data-id="${c.id}" data-nome="${esc(c.nome)}">
+    <span class="c">${esc(c.nome)} <small>${c.uf}</small></span>
+    <span class="q">${cerca(c.jogo)}<small>votos em jogo${extra}</small></span>
+    <span class="chip">${a.nome}</span></button></li>`;
+}
+
+function escolhe(c){
+  $("#q").value = `${c.nome} (${c.uf})`; $("#sug").innerHTML = ""; $("#hint").hidden = true;
+  const r = $("#resultado"); r.hidden = false;
+  try{ localStorage.setItem("cidade", c.id + "|" + c.nome); }catch(e){}
+  let h = `<div class="res-head"><h2>${esc(c.nome)}</h2><span class="uf">${UFN[c.uf]||c.uf}</span></div>`;
+  if(c.acao){
+    const a = ACOES[c.acao];
+    h += `<div class="acao t${c.acao}"><div><div class="nome"><span class="ico" aria-hidden="true">${a.ico}</span>${a.nome}</div><p>${a.txt}</p></div></div>`;
+    h += `<p class="numero"><b>${cerca(c.jogo)}</b> votos em jogo aqui</p>`;
+    const z = DADOS.zonas[c.id];
+    if(z && z.length){
+      h += `<div class="zonas"><h3>${c.acao===3?"Onde concentrar a presença":"Zonas com mais votos em jogo"}</h3><p class="sub">Zonas eleitorais ordenadas pelos votos em jogo, com os bairros onde ficam seus locais de votação.</p>`+
+        z.map(([n,j,bs]) => `<div class="zona"><b>Zona ${n}</b><span class="q">${cerca(j)}</span><span class="bairros">${bs.length?esc(bs.join(", ")):"Bairros não informados"}</span></div>`).join("") + `</div>`;
+    }
+  } else {
+    const perto = PRIO.filter(p => p.id!==c.id && p.lat!=null && p.jogo >= PERTO_MIN).map(p => ({p, d:distKm(c,p)})).sort((a,b)=>a.d-b.d).slice(0,3);
+    h += `<div class="acao t0"><div><div class="nome">Fora das prioritárias</div><p>Sua cidade não está entre as prioritárias deste 2º turno. Sua ajuda pode render mais nestas cidades perto de você:</p></div></div>`;
+    h += `<div class="perto" style="margin-top:12px"><ul class="lista">${perto.map(({p,d}) => linhaCidade(p, ` · a ${Math.round(d)} km`)).join("")}</ul></div>`;
+    h += `<button class="btn full" type="button" id="ver-uf" style="margin-top:10px">Ver as prioritárias de ${esc(UFN[c.uf]||c.uf)}</button>`;
+  }
+  r.innerHTML = h;
+  const vu = $("#ver-uf"); if(vu) vu.onclick = () => { $("#uf").value = c.uf; lista(); $("#h-onde").scrollIntoView({behavior:"smooth"}); };
+  r.querySelectorAll(".linha").forEach(b => b.onclick = () => escolhe(C.find(x=>x.id===b.dataset.id && x.nome===b.dataset.nome)));
+  try{ history.replaceState(null, "", "#c" + c.id); }catch(e){}
+  r.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+// ----------------------------------------------------------------- onde mais conta
+let limite = 15;
+function lista(reset=true){
+  if(reset) limite = 15;
+  const uf = $("#uf").value, src = PRIO.filter(c => !uf || c.uf===uf);
+  $("#onde-hint").textContent = uf ? `${src.length} cidades prioritárias em ${UFN[uf]}, das com mais votos em jogo para as com menos.` : `As cidades prioritárias com mais votos em jogo no Brasil. Escolha um estado para ver todas.`;
+  $("#onde").innerHTML = src.slice(0, limite).map(c => linhaCidade(c)).join("");
+  $("#mais").hidden = src.length <= limite;
+  $("#onde").querySelectorAll(".linha").forEach(b => b.onclick = () => escolhe(C.find(x=>x.id===b.dataset.id && x.nome===b.dataset.nome)));
+}
+$("#uf").innerHTML = `<option value="">Brasil (todos os estados)</option>` + Object.keys(UFN).sort((a,b)=>UFN[a].localeCompare(UFN[b])).map(u => `<option value="${u}">${UFN[u]}</option>`).join("");
+$("#uf").onchange = () => lista();
+$("#mais").onclick = () => { limite += 30; lista(false); };
+
+aplicaMarca(); topo(); lista();
+// abre a cidade do link (#c3550308) ou a última consultada
+(function(){
+  let id = (location.hash.match(/^#c(\d{7})$/)||[])[1], nome;
+  if(!id){ try{ const s = localStorage.getItem("cidade"); if(s){ [id, nome] = s.split("|"); } }catch(e){} }
+  const c = id && (C.find(x=>x.id===id && (!nome || x.nome===nome)) || C.find(x=>x.id===id));
+  if(c){ escolhe(c); scrollTo(0,0); }
+})();
+</script>
+</body>
+</html>

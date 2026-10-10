@@ -125,3 +125,35 @@ Domínios bloqueados neste ambiente, nenhum deles necessário: `aplicacoes.cidad
 
 - Base Eleitoral: trocar `01_download.py` pela leitura do DuckDB local. `02_build.py` só precisa dos mesmos campos agregados.
 - `build_protegido.py`, KV e FTP: publicar `painel/` e `data/` no padrão Tá Dito. O painel é estático e não tem dependências externas.
+
+---
+
+# Versão pública — "Onde seu voto vira mais votos"
+
+Segundo produto do mesmo pipeline, voltado à militância. Responde: *onde meu esforço vira mais votos no 2º turno, e o que eu faço lá?*
+
+- Gerada por `python scripts/04_publico.py` (depois do `02_build.py`), a partir de `data/*.json` e, para o detalhe por zona, de `raw/`.
+- Saídas: `data_publico/publico.json` e `painel_publico/index.html`, uma página única com os dados embutidos (~330 KB, sem mapa e sem dependências externas).
+- O texto é editado em `painel_publico/template.html`. A marca (nome, logo, cor e título) fica configurável num único ponto: o objeto `MARCA` no topo do script da página.
+
+| Ação (página pública) | Origem (análise) | Cidades |
+|---|---|---:|
+| Levar para votar | mobilização | 295 |
+| Conversar com quem mudou | reconquista | 677 |
+| Disputar bairro a bairro | disputa | 106 |
+| Fora das prioritárias (mensagem neutra e 3 prioritárias próximas com ≥ 5 mil votos em jogo) | consolidado, equilíbrio, adverso | 4.493 |
+
+- **"Votos em jogo"** = o mesmo "estoque" da análise (terceiros + brancos/nulos + abstenção acima da histórica), exibido com 2 algarismos significativos.
+- **Zonas e bairros**: aparecem em 69 cidades-alvo com mais de uma zona eleitoral (as do segmento disputa e as capitais), até 8 zonas por cidade, ordenadas por votos em jogo. Os bairros são os 4 com mais eleitores entre os locais de votação de cada zona (`eleitorado_local_votacao_2026`). Zona nova, sem dado de 2022, usa a abstenção histórica do município.
+- A página **não** mostra recortes socioeconômicos, fórmulas, termos técnicos nem dado de pessoa.
+- **Fica para a fase 2**: o ranking de bairros por seção eleitoral, que exige `votacao_secao` de 2022 e 2026 (~8 GB) e cobriria também as cidades de uma zona só.
+
+Checagem com a versão de análise (mesma base):
+
+| Cidade | Segmento (análise) | Estoque (análise) | Ação (pública) | Votos em jogo (pública) | OK |
+|---|---|---:|---|---:|:-:|
+| São Paulo (SP) | disputa | 1.404.211 | Disputar bairro a bairro | 1.404.211 | ✓ |
+| Salvador (BA) | mobilização | 287.690 | Levar para votar | 287.690 | ✓ |
+| Feira de Santana (BA) | reconquista | 57.013 | Conversar com quem mudou | 57.013 | ✓ |
+| Campinas (SP) | adverso | 113.293 | fora das prioritárias | 113.293 | ✓ |
+| Ilhéus (BA) | consolidado | 13.895 | fora das prioritárias | 13.895 | ✓ |
