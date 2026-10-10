@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cenário Presidencial 2026</title>
+<meta name="description" content="Tá Dito — onde e como Lula perdeu ou ganhou votos entre o 2º turno de 2022 e o 1º turno de 2026.">
+<style>
+:root{
+  color-scheme:light;
+  --page:#f9f9f7; --surface:#fcfcfb; --surface-2:#f2f1ed;
+  --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781; --grid:#e1e0d9; --axis:#c3c2b7;
+  --border:rgba(11,11,11,.10);
+  --lula:#e34948; --adv:#2a78d6; --terc:#eda100;
+  --seg-reconquista:#eb6834; --seg-mobilizacao:#1baf7a; --seg-disputa:#2a78d6;
+  --seg-consolidado:#b9b7ae; --seg-equilibrio:#dcdad3; --seg-adverso:#7d7b74;
+  --div-neg:#b3261e; --div-mid:#f0efec; --div-pos:#104281;
+  --seq-0:#fdf0e8; --seq-1:#a33a10;
+  --good:#006300; --bad:#b3261e; --accent:#2a78d6;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --page:#0d0d0d; --surface:#1a1a19; --surface-2:#242422;
+    --ink:#f0efec; --ink-2:#c3c2b7; --muted:#898781; --grid:#2c2c2a; --axis:#383835;
+    --border:rgba(255,255,255,.10);
+    --lula:#e66767; --adv:#3987e5; --terc:#c98500;
+    --seg-reconquista:#d95926; --seg-mobilizacao:#199e70; --seg-disputa:#3987e5;
+    --seg-consolidado:#5e5d58; --seg-equilibrio:#3a3a37; --seg-adverso:#8f8d86;
+    --div-neg:#e66767; --div-mid:#383835; --div-pos:#6da7ec;
+    --seq-0:#2a2420; --seq-1:#f08a5d;
+    --good:#0ca30c; --bad:#e66767; --accent:#3987e5;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#0d0d0d; --surface:#1a1a19; --surface-2:#242422;
+  --ink:#f0efec; --ink-2:#c3c2b7; --muted:#898781; --grid:#2c2c2a; --axis:#383835;
+  --border:rgba(255,255,255,.10);
+  --lula:#e66767; --adv:#3987e5; --terc:#c98500;
+  --seg-reconquista:#d95926; --seg-mobilizacao:#199e70; --seg-disputa:#3987e5;
+  --seg-consolidado:#5e5d58; --seg-equilibrio:#3a3a37; --seg-adverso:#8f8d86;
+  --div-neg:#e66767; --div-mid:#383835; --div-pos:#6da7ec;
+  --seq-0:#2a2420; --seq-1:#f08a5d;
+  --good:#0ca30c; --bad:#e66767; --accent:#3987e5;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--page);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+header{padding:14px 16px 0;max-width:1100px;margin:0 auto}
+h1{font-size:19px;margin:0 0 2px;letter-spacing:-.01em}
+.sub{color:var(--ink-2);font-size:13px;margin:0}
+nav{position:sticky;top:0;z-index:10;background:var(--page);border-bottom:1px solid var(--grid);margin-top:10px}
+nav .tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;max-width:1100px;margin:0 auto;padding:0 12px}
+nav .tabs::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;border:0;background:none;color:var(--ink-2);font:inherit;font-size:14px;padding:10px 10px;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink);font-weight:600}
+.status{max-width:1100px;margin:0 auto;padding:6px 16px;font-size:12px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:4px 10px}
+.status b{color:var(--ink);font-weight:600}
+.badge{display:inline-block;font-size:11px;padding:1px 6px;border-radius:99px;border:1px solid var(--border);background:var(--surface-2);color:var(--ink-2)}
+main{max-width:1100px;margin:0 auto;padding:4px 16px 48px}
+section.tab{display:none}
+section.tab.on{display:block}
+h2{font-size:17px;margin:20px 0 6px}
+h3{font-size:15px;margin:18px 0 6px}
+p.note{color:var(--ink-2);font-size:13px;margin:4px 0 10px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;margin:10px 0}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media(min-width:700px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;min-width:0}
+.kpi .l{font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.kpi .v{font-size:22px;font-weight:650;letter-spacing:-.01em;margin-top:2px}
+.kpi .d{font-size:12px;color:var(--ink-2)}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:0 0 auto}
+.neg{color:var(--bad)} .pos{color:var(--good)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+select,input[type=search],input[type=number]{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--axis);border-radius:8px;padding:6px 8px;max-width:100%}
+button.btn{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--axis);border-radius:8px;padding:6px 10px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border:1px solid var(--axis);border-radius:99px;padding:4px 10px;background:var(--surface);cursor:pointer;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);font-weight:600}
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--grid)}
+th{position:sticky;top:0;background:var(--surface-2);font-weight:600;color:var(--ink-2);cursor:pointer;user-select:none}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--surface);z-index:1}
+th:first-child{background:var(--surface-2);z-index:2}
+td:first-child{white-space:normal;min-width:110px;max-width:170px}
+td.l,th.l{text-align:left}
+tr:last-child td{border-bottom:0}
+.map{width:100%;height:auto;display:block;touch-action:manipulation}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--ink-2);margin-top:6px;align-items:center}
+.legend .sw{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:-2px}
+.ramp{height:10px;border-radius:3px;width:180px;max-width:50vw}
+.info{font-size:13px;min-height:3em}
+.info h4{margin:0 0 4px;font-size:15px}
+.info .g{display:grid;grid-template-columns:auto auto;gap:2px 12px}
+.info .g span:nth-child(odd){color:var(--ink-2)}
+.info .g span:nth-child(even){text-align:right;font-variant-numeric:tabular-nums}
+svg text{fill:var(--ink-2);font-size:11px}
+svg .axis line,svg .axis path{stroke:var(--axis)}
+svg .gridl line{stroke:var(--grid)}
+.tip{position:fixed;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.18);border-radius:8px;padding:6px 8px;font-size:12px;z-index:50;display:none;max-width:260px}
+.rule{border-left:3px solid var(--axis);padding:2px 10px;margin:8px 0}
+.rule b{display:inline-flex;align-items:center;gap:6px}
+code{font-size:12px;background:var(--surface-2);padding:1px 4px;border-radius:4px}
+.ok{color:var(--good);font-weight:600}
+.small{font-size:12px;color:var(--ink-2)}
+.loading{padding:40px 0;text-align:center;color:var(--ink-2)}
+.two{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:900px){.two{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Cenário Presidencial 2026</h1>
+  <p class="sub">Onde e como Lula perdeu (ou ganhou) votos — leitura sequencial <b>2º turno 2022 → 1º turno 2026</b>, rumo ao 2º turno de 25/10.</p>
+</header>
+<nav><div class="tabs" role="tablist" id="tabs"></div></nav>
+<div class="status" id="status"></div>
+<main id="main"><div class="loading">Carregando dados…</div></main>
+<div class="tip" id="tip"></div>
+
+<script>
+"use strict";
+// ============================================================ dados
+const DATA_FILES = ["meta","municipios","ufs","regioes","geo_municipios","geo_ufs"];
+async function loadData(){
+  if (window.__DATA__) return window.__DATA__;
+  const out = {};
+  await Promise.all(DATA_FILES.map(async f => { out[f] = await (await fetch(`../data/${f}.json`)).json(); }));
+  return out;
+}
+const rowsToObjs = t => t.rows.map(r => Object.fromEntries(t.cols.map((c,i)=>[c,r[i]])));
+
+
+// ============================================================ mini-biblioteca (sem dependências externas)
+const d3 = {
+  sum:(a,f=x=>x)=>a.reduce((s,d)=>{const v=f(d); return s+(v==null||isNaN(v)?0:+v);},0),
+  max:(a,f=x=>x)=>{let m; for(const d of a){const v=f(d); if(v!=null&&!isNaN(v)&&(m===undefined||v>m)) m=v;} return m;},
+  min:(a,f=x=>x)=>{let m; for(const d of a){const v=f(d); if(v!=null&&!isNaN(v)&&(m===undefined||v<m)) m=v;} return m;},
+  extent:(a,f)=>[d3.min(a,f), d3.max(a,f)],
+  range:(a,b,s)=>{const o=[]; for(let x=a;x<b;x+=s) o.push(x); return o;},
+  rollup:(a,red,key)=>{const g=new Map(); for(const d of a){const k=key(d); if(!g.has(k)) g.set(k,[]); g.get(k).push(d);} return new Map([...g].map(([k,v])=>[k,red(v)]));},
+  compact:v=>new Intl.NumberFormat("pt-BR",{notation:"compact",maximumFractionDigits:1}).format(v),
+};
+function niceTicks(lo, hi, n=5){
+  if(lo===hi) return [lo];
+  const step0 = (hi-lo)/n, p = Math.pow(10, Math.floor(Math.log10(step0))), e = step0/p;
+  const step = (e>=7.5?10:e>=3.5?5:e>=1.5?2:1)*p;
+  const out=[]; for(let v=Math.ceil(lo/step)*step; v<=hi+step*1e-9; v+=step) out.push(+v.toFixed(10)); return out;
+}
+function linear(d0, d1, r0, r1, {nice=false, log=false, sqrt=false}={}){
+  const tf = log? Math.log10 : sqrt? Math.sqrt : x=>x;
+  if(nice && !log){ const t=niceTicks(d0,d1,5), st=t.length>1?t[1]-t[0]:1; d0=Math.floor(d0/st)*st; d1=Math.ceil(d1/st)*st; }
+  if(log){ d0=Math.pow(10,Math.floor(Math.log10(d0))); d1=Math.pow(10,Math.ceil(Math.log10(d1))); }
+  const a=tf(d0), b=tf(d1);
+  const f = v => r0 + (tf(v)-a)/((b-a)||1)*(r1-r0);
+  f.domain = [d0,d1];
+  f.ticks = n => log? d3.range(Math.log10(d0), Math.log10(d1)+0.01, 1).map(e=>Math.pow(10,e)) : niceTicks(d0,d1,n);
+  return f;
+}
+const hex2rgb = h => { h=h.replace("#",""); if(h.length===3) h=h.split("").map(c=>c+c).join(""); return [0,2,4].map(i=>parseInt(h.slice(i,i+2),16)); };
+function interp(colors){ const cs=colors.map(hex2rgb);
+  return t => { t=Math.max(0,Math.min(1,t)); const n=cs.length-1, i=Math.min(n-1,Math.floor(t*n)), u=t*n-i;
+    const c=cs[i].map((v,k)=>Math.round(v+(cs[i+1][k]-v)*u)); return `rgb(${c[0]},${c[1]},${c[2]})`; }; }
+// Projeção de Mercator + gerador de caminhos SVG
+function mercator(features, W){
+  const P = ([lon,lat]) => [lon*Math.PI/180, -Math.log(Math.tan(Math.PI/4 + lat*Math.PI/360))];
+  let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity;
+  const each = (g, fn) => { const polys = g.type==="Polygon"? [g.coordinates] : g.coordinates; polys.forEach(poly=>poly.forEach(ring=>ring.forEach(fn))); };
+  features.forEach(f=>each(f.geometry, c=>{ const [x,y]=P(c); if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y; }));
+  const k = (W-4)/(x1-x0), H = Math.ceil((y1-y0)*k)+4;
+  const proj = c => { const [x,y]=P(c); return [(x-x0)*k+2, (y-y0)*k+2]; };
+  const path = f => { const polys = f.geometry.type==="Polygon"? [f.geometry.coordinates] : f.geometry.coordinates; let s="";
+    for(const poly of polys) for(const ring of poly){ let first=true, lx, ly;
+      for(const c of ring){ const [x,y]=proj(c); const rx=Math.round(x*10)/10, ry=Math.round(y*10)/10; if(!first && rx===lx && ry===ly) continue; s += (first?"M":"L")+rx+","+ry; first=false; lx=rx; ly=ry; }
+      s+="Z"; } return s; };
+  const centroid = f => { const polys = f.geometry.type==="Polygon"? [f.geometry.coordinates] : f.geometry.coordinates; let best=null, ba=-1;
+    for(const poly of polys){ const r=poly[0].map(proj); let a=0,cx=0,cy=0; for(let i=0;i<r.length-1;i++){ const c=r[i][0]*r[i+1][1]-r[i+1][0]*r[i][1]; a+=c; cx+=(r[i][0]+r[i+1][0])*c; cy+=(r[i][1]+r[i+1][1])*c; }
+      if(Math.abs(a)>ba){ ba=Math.abs(a); best = a? [cx/(3*a), cy/(3*a)] : r[0]; } } return best; };
+  return {H, path, centroid};
+}
+// Delegação de eventos para elementos SVG com data-i
+function bindHover(svgEl, items, tipf, onTap){
+  const get = ev => { const t = ev.target.closest("[data-i]"); return t? {t, d:items[+t.dataset.i]} : null; };
+  if(tipf){ svgEl.addEventListener("pointermove", ev=>{ const h=get(ev); if(h && ev.pointerType==="mouse") showTip(ev, tipf(h.d)); else if(!h) hideTip(); });
+    svgEl.addEventListener("pointerleave", hideTip); }
+  svgEl.addEventListener("click", ev=>{ const h=get(ev); if(!h) return; if(onTap) { hideTip(); onTap(h.d, h.t, ev); } else if(tipf) showTip(ev, tipf(h.d)); });
+}
+
+// ============================================================ formatação
+const nf0 = new Intl.NumberFormat("pt-BR",{maximumFractionDigits:0});
+const nf1 = new Intl.NumberFormat("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1});
+const fInt = v => v==null?"–":nf0.format(v);
+const fSig = v => v==null?"–":(v>0?"+":v<0?"−":"")+nf0.format(Math.abs(v));
+const fPct = v => v==null?"–":nf1.format(v)+"%";
+const fPP = v => v==null?"–":(v>0?"+":v<0?"−":"")+nf1.format(Math.abs(v))+" pp";
+const fMi = v => v==null?"–":(v<0?"−":"")+nf1.format(Math.abs(v)/1e6).replace(/,0$/,"")+" mi";
+const fMiS = v => v==null?"–":(v>0?"+":v<0?"−":"")+nf1.format(Math.abs(v)/1e6)+" mi";
+const fK = v => { const a=Math.abs(v); const s=v<0?"−":""; return a>=1e6? s+nf1.format(a/1e6)+" mi" : a>=1e3? s+nf0.format(a/1e3)+" mil" : s+nf0.format(a); };
+const fKS = v => (v>0?"+":"")+fK(v);
+const sgnCls = v => v<0?"neg":v>0?"pos":"";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const SEG = {
+  reconquista:{rot:"Reconquista", cor:"--seg-reconquista"},
+  mobilizacao:{rot:"Mobilização", cor:"--seg-mobilizacao"},
+  disputa:{rot:"Disputa", cor:"--seg-disputa"},
+  consolidado:{rot:"Consolidado", cor:"--seg-consolidado"},
+  equilibrio:{rot:"Equilíbrio (pequeno porte)", cor:"--seg-equilibrio"},
+  adverso:{rot:"Adverso", cor:"--seg-adverso"},
+};
+const SIT = {virou_contra:"Vantagem virou contra Lula", encolheu:"Saldo encolheu", aumentou:"Saldo aumentou", virou_favor:"Virou a favor de Lula"};
+const VIR = {frente:"Lula à frente", possivel:"Atrás — estoque > déficit", dificil:"Atrás — déficit > estoque"};
+
+let D, M, MUN, BYID, UFS, REG, B;
+const tip = document.getElementById("tip");
+function showTip(ev, html){ tip.innerHTML = html; tip.style.display="block";
+  const x = Math.min(ev.clientX+12, innerWidth - tip.offsetWidth - 8), y = Math.min(ev.clientY+12, innerHeight - tip.offsetHeight - 8);
+  tip.style.left = x+"px"; tip.style.top = y+"px"; }
+function hideTip(){ tip.style.display="none"; }
+
+// ============================================================ abas
+const TABS = [
+  ["brasil","Brasil"],["mapa","Mapa municipal"],["perdas","Onde perdeu"],["abstencao","Abstenção"],
+  ["perfil","Perfil socioeconômico"],["prioritarios","Territórios prioritários"],["fontes","Regras e fontes"]];
+const rendered = {};
+function buildTabs(){
+  const t = document.getElementById("tabs"), m = document.getElementById("main");
+  m.innerHTML = TABS.map(([id])=>`<section class="tab" id="tab-${id}"></section>`).join("");
+  t.innerHTML = TABS.map(([id,l])=>`<button role="tab" data-t="${id}">${l}</button>`).join("");
+  t.onclick = e => { const b = e.target.closest("button"); if(b) go(b.dataset.t); };
+  addEventListener("hashchange", () => go(location.hash.slice(1), false));
+  go(location.hash.slice(1) || "brasil", false);
+}
+function go(id, push=true){
+  if(!TABS.find(t=>t[0]===id)) id="brasil";
+  if(push) history.replaceState(null,"","#"+id);
+  document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected", b.dataset.t===id));
+  document.querySelectorAll("section.tab").forEach(s=>s.classList.toggle("on", s.id==="tab-"+id));
+  if(!rendered[id]){ rendered[id]=true; RENDER[id](document.getElementById("tab-"+id)); }
+  scrollTo({top:0});
+}
+
+function statusBar(){
+  const f = M.fontes;
+  const ex = new Date(M.data_extracao);
+  document.getElementById("status").innerHTML =
+    `<span><b>1T26</b> ${f[1].gerado.split(" ")[0]} <span class="badge">oficial TSE · sujeito a atualização</span></span>`+
+    `<span><b>2T22</b> <span class="badge">oficial</span></span>`+
+    `<span><b>Censo/PIB</b> 2022 <span class="badge">defasado</span></span>`+
+    `<span><b>Bolsa Família</b> ${f[6].ciclo.slice(4)}/${f[6].ciclo.slice(0,4)}</span>`+
+    `<span>extração ${ex.toLocaleDateString("pt-BR")} · <a href="#fontes" style="color:inherit">fontes</a></span>`;
+}
+
+// ============================================================ helpers de gráfico
+function hbar(el, items, {fmt=fSig, color=()=>css("--ink-2"), width, label=d=>d.label, value=d=>d.value, rowH=26, sub}={}){
+  const W = width || el.clientWidth || 340, LW = Math.min(150, W*0.38), pad = 64;
+  const vals = items.map(value), max = d3.max(vals.map(Math.abs)) || 1, hasNeg = d3.min(vals) < 0, hasPos = d3.max(vals) > 0;
+  const x = linear(hasNeg?-max:0, hasPos?max:0, LW+(hasNeg?pad:4), W-(hasPos?pad:4));
+  const H = items.length*rowH + 8, x0 = x(0);
+  let g = `<line x1="${x0}" x2="${x0}" y1="0" y2="${H}" stroke="${css("--axis")}"/>`;
+  items.forEach((d,i)=>{ const v=value(d), xv=x(v), y=i*rowH+4;
+    g += `<g data-i="${i}" transform="translate(0,${y})"><rect x="0" y="0" width="${W}" height="${rowH}" fill="transparent"/>`+
+      `<text x="0" y="${rowH/2}" dy="0.35em" style="fill:${css("--ink")};font-size:12px">${esc(label(d))}</text>`+
+      `<rect x="${Math.min(x0,xv)}" y="5" height="${rowH-10}" width="${Math.max(1,Math.abs(xv-x0))}" rx="3" fill="${color(d)}"/>`+
+      `<text x="${v<0?xv-4:xv+4}" y="${rowH/2}" dy="0.35em" text-anchor="${v<0?"end":"start"}" style="fill:${css("--ink")};font-variant-numeric:tabular-nums">${fmt(v)}</text></g>`; });
+  el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img">${g}</svg>`);
+  const svg = el.lastElementChild; if(sub) bindHover(svg, items, sub);
+  return svg;
+}
+
+function scatter(el, data, {x, y, r=d=>d.aptos_26, xl, yl, color=()=>css("--accent"), tipf, xfmt=d3.compact, yfmt=v=>v, line=null, yzero=true, xlog=false}){
+  const W = el.clientWidth || 340, H = Math.round(Math.min(420, W*0.8)), m = {l:44,r:10,t:10,b:36};
+  const data2 = data.filter(d=>x(d)!=null && y(d)!=null && (!xlog || x(d)>0));
+  const [xa,xb] = d3.extent(data2,x), [ya,yb] = d3.extent(data2,y);
+  const xs = linear(xa, xb, m.l, W-m.r, {nice:true, log:xlog}), ys = linear(ya, yb, H-m.b, m.t, {nice:true});
+  const rmax = d3.max(data2,r)||1, rs = v => Math.max(1.5, Math.sqrt(v/rmax)*Math.max(10, W/45));
+  let g = "";
+  ys.ticks(5).forEach(t=>{ g += `<line x1="${m.l}" x2="${W-m.r}" y1="${ys(t)}" y2="${ys(t)}" stroke="${css("--grid")}"/><text x="${m.l-4}" y="${ys(t)}" dy="0.35em" text-anchor="end">${yfmt(t)}</text>`; });
+  xs.ticks(W<500?4:7).forEach(t=>{ g += `<line x1="${xs(t)}" x2="${xs(t)}" y1="${H-m.b}" y2="${H-m.b+4}" stroke="${css("--axis")}"/><text x="${xs(t)}" y="${H-m.b+14}" text-anchor="middle">${xfmt(t)}</text>`; });
+  g += `<line x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}" stroke="${css("--axis")}"/>`;
+  if(yzero && ys.domain[0]<0 && ys.domain[1]>0) g += `<line x1="${m.l}" x2="${W-m.r}" y1="${ys(0)}" y2="${ys(0)}" stroke="${css("--axis")}" stroke-width="1.5"/>`;
+  g += `<text x="${W-m.r}" y="${H-4}" text-anchor="end">${esc(xl)}</text><text x="${m.l+4}" y="${m.t+10}">${esc(yl)}</text>`;
+  const sorted = data2.slice().sort((a,b)=>r(b)-r(a)), sf = css("--surface");
+  sorted.forEach((d,i)=>{ g += `<circle data-i="${i}" cx="${xs(x(d)).toFixed(1)}" cy="${ys(y(d)).toFixed(1)}" r="${rs(r(d)).toFixed(1)}" fill="${color(d)}" fill-opacity=".55" stroke="${sf}" stroke-width=".6"/>`; });
+  if(line){ const [a,b]=line, X=xs.domain; g += `<line x1="${xs(X[0])}" x2="${xs(X[1])}" y1="${ys(a+b*X[0])}" y2="${ys(a+b*X[1])}" stroke="${css("--ink")}" stroke-width="2" stroke-dasharray="5 4" pointer-events="none"/>`; }
+  el.insertAdjacentHTML("beforeend", `<svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:hidden">${g}</svg>`);
+  const svg = el.lastElementChild; bindHover(svg, sorted, tipf);
+  return svg;
+}
+
+function table(el, rows, cols, {limit=25, sort, desc=true, csvName}={}){
+  let sk = sort || cols[1].k, sd = desc, lim = limit;
+  const wrap = document.createElement("div"); el.appendChild(wrap);
+  function draw(){
+    const s = rows.slice().sort((a,b)=>{ const va=a[sk], vb=b[sk]; if(va==null) return 1; if(vb==null) return -1; return (typeof va==="string"? va.localeCompare(vb) : va-vb)*(sd?-1:1); });
+    const shown = s.slice(0, lim);
+    wrap.innerHTML = `<div class="tblwrap"><table><thead><tr>${cols.map(c=>`<th class="${c.l?'l':''}" data-k="${c.k}">${c.t}${c.k===sk?(sd?" ↓":" ↑"):""}</th>`).join("")}</tr></thead><tbody>`+
+      shown.map(r=>`<tr>${cols.map(c=>`<td class="${c.l?'l':''} ${c.cls?c.cls(r[c.k],r):''}">${c.f?c.f(r[c.k],r):esc(r[c.k]??"–")}</td>`).join("")}</tr>`).join("")+`</tbody></table></div>`+
+      `<div class="row small">${shown.length} de ${s.length}${s.length>lim?` · <button class="btn" data-more>mostrar mais</button>`:""}${csvName?` · <button class="btn" data-csv>Exportar CSV (${s.length})</button>`:""}</div>`;
+    wrap.querySelectorAll("th").forEach(th=>th.onclick=()=>{ const k=th.dataset.k; if(k===sk) sd=!sd; else {sk=k; sd=true;} draw(); });
+    const mb = wrap.querySelector("[data-more]"); if(mb) mb.onclick=()=>{ lim+=50; draw(); };
+    const cb = wrap.querySelector("[data-csv]"); if(cb) cb.onclick=()=>csv(s, cols, csvName);
+  }
+  draw();
+  return {update(r){ rows=r; lim=limit; draw(); }};
+}
+function csv(rows, cols, name){
+  const head = cols.map(c=>c.csv||c.k);
+  const lines = [head.join(";")].concat(rows.map(r=>cols.map(c=>{ let v=r[c.k]; if(v==null) return ""; if(typeof v==="number") return String(v).replace(".",","); v=String(v); return /[;"\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v; }).join(";")));
+  const blob = new Blob(["﻿"+lines.join("\n")],{type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+}
+function chips(el, opts, sel, onChange, {multi=false}={}){
+  el.classList.add("chips");
+  el.innerHTML = opts.map(o=>`<button class="chip" data-v="${o.v}" aria-pressed="${multi?sel.includes(o.v):sel===o.v}">${o.sw?`<span class="dot" style="background:${o.sw}"></span>`:""}${o.l}</button>`).join("");
+  el.onclick = e => { const b=e.target.closest(".chip"); if(!b) return; const v=b.dataset.v;
+    if(multi){ sel = sel.includes(v)? sel.filter(x=>x!==v) : sel.concat(v); } else sel = v;
+    el.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", multi? sel.includes(c.dataset.v) : c.dataset.v===sel)); onChange(sel); };
+}
+const ufOptions = (all="Brasil") => `<option value="">${all}</option>` + UFS.map(u=>u.uf).sort().map(u=>`<option>${u}</option>`).join("");
+const segDot = s => `<span class="dot" style="background:${css(SEG[s].cor)}"></span>`;
+const segCell = s => SEG[s]? `${segDot(s)} ${SEG[s].rot}` : s;
+
+// ============================================================ mapas
+const divScale = (lim) => { const i = interp([css("--div-neg"), css("--div-mid"), css("--div-pos")]); return v => i((v+lim)/(2*lim)); };
+const seqScale = (lo,hi) => { const i = interp([css("--seq-0"), css("--seq-1")]); return v => i((v-lo)/(hi-lo)); };
+
+const LAYERS = {
+  d_pen_l:{rot:"Variação da penetração de Lula (pp do eleitorado)", tipo:"div", lim:10, fmt:fPP, legenda:["queda","alta"]},
+  d_pv_l:{rot:"Variação de Lula em % dos válidos (pp)", tipo:"div", lim:12, fmt:fPP, legenda:["queda","alta"]},
+  pv_l26:{rot:"Lula % dos válidos 1T26", tipo:"div", lim:30, center:50, fmt:fPct, legenda:["Flávio à frente","Lula à frente"]},
+  d_saldo_pp:{rot:"Variação do saldo Lula − adversário (pp)", tipo:"div", lim:15, fmt:fPP, legenda:["encolheu","aumentou"]},
+  abs26:{rot:"Abstenção 1T26 (%)", tipo:"seq", lo:10, hi:35, fmt:fPct},
+  abs_exc_pp:{rot:"Abstenção 1T26 acima da histórica (pp)", tipo:"div", lim:6, fmt:fPP, legenda:["abaixo","acima"], inv:true},
+  seg:{rot:"Segmento estratégico", tipo:"cat", cats:SEG},
+  virada:{rot:"Estoque em disputa × déficit", tipo:"cat", cats:{frente:{rot:VIR.frente,cor:"--seg-consolidado"}, possivel:{rot:VIR.possivel,cor:"--seg-mobilizacao"}, dificil:{rot:VIR.dificil,cor:"--seg-reconquista"}}},
+  sit_saldo:{rot:"Situação do saldo Lula × adversário", tipo:"cat", cats:{virou_contra:{rot:SIT.virou_contra,cor:"--seg-reconquista"}, encolheu:{rot:SIT.encolheu,cor:"--seg-consolidado"}, aumentou:{rot:SIT.aumentou,cor:"--seg-mobilizacao"}, virou_favor:{rot:SIT.virou_favor,cor:"--seg-disputa"}}},
+};
+function layerColor(key){
+  const L = LAYERS[key];
+  if(L.tipo==="cat") return v => v? css(L.cats[v].cor) : css("--grid");
+  if(L.tipo==="seq"){ const s = seqScale(L.lo,L.hi); return v => v==null? css("--grid") : s(v); }
+  const s = divScale(L.lim); const c = L.center||0;
+  return v => v==null? css("--grid") : s(L.inv? -(v-c) : v-c);
+}
+function legend(el, key){
+  const L = LAYERS[key];
+  if(L.tipo==="cat"){ el.innerHTML = Object.values(L.cats).map(c=>`<span><span class="sw" style="background:${css(c.cor)}"></span>${c.rot}</span>`).join(""); return; }
+  const f = layerColor(key); let lo, hi, txt;
+  if(L.tipo==="seq"){ lo=L.lo; hi=L.hi; txt=[L.fmt(lo)+" ou menos", L.fmt(hi)+" ou mais"]; }
+  else { const c=L.center||0; lo=c-L.lim; hi=c+L.lim; txt=[`${L.legenda[0]} ${L.fmt(L.inv?hi:lo).replace(/^\+/,"")}`, `${L.legenda[1]} ${L.fmt(L.inv?lo:hi)}`]; if(L.inv){[lo,hi]=[hi,lo];} }
+  const stops = d3.range(0,1.0001,0.1).map(t=>f(lo+(hi-lo)*t));
+  el.innerHTML = `<span>${txt[0]}</span><span class="ramp" style="background:linear-gradient(90deg,${stops.join(",")})"></span><span>${txt[1]}</span>`;
+}
+
+function muniInfo(d){
+  if(!d) return `<span class="small">Toque em um município para ver os números.</span>`;
+  return `<h4>${esc(d.nome)} — ${d.uf}</h4><div class="small">${segCell(d.seg)} · ${VIR[d.virada]}</div>
+  <div class="g" style="margin-top:6px">
+  <span>Eleitorado apto 1T26</span><span>${fInt(d.aptos_26)} (${fPP(d.d_aptos_pct).replace(" pp","%")})</span>
+  <span>Lula 2T22 → 1T26</span><span>${fInt(d.lula_22)} → ${fInt(d.lula_26)} (<b class="${sgnCls(d.d_lula)}">${fSig(d.d_lula)}</b>)</span>
+  <span>Lula % válidos</span><span>${fPct(d.pv_l22)} → ${fPct(d.pv_l26)}</span>
+  <span>Penetração Lula</span><span>${fPct(d.pen_l22)} → ${fPct(d.pen_l26)} (<b class="${sgnCls(d.d_pen_l)}">${fPP(d.d_pen_l)}</b>)</span>
+  <span>${esc(M.candidatos.adv22.split(" (")[0])} → ${esc(M.candidatos.adv26.split(" (")[0])}</span><span>${fInt(d.adv_22)} → ${fInt(d.adv_26)}</span>
+  <span>Saldo Lula − adv.</span><span>${fSig(d.saldo22)} → ${fSig(d.saldo26)}</span>
+  <span>Abstenção</span><span>${fPct(d.abs22)} → ${fPct(d.abs26)} (hist. ${fPct(d.abs_hist)})</span>
+  <span>Terceiros 1T26</span><span>${fInt(d.outros_26)} (${fPct(d.pv_o26)})</span>
+  <span>Estoque em disputa</span><span>${fInt(d.estoque)}</span>
+  <span>Déficit de Lula</span><span>${d.deficit>0?fInt(d.deficit):"— (à frente por "+fInt(-d.deficit)+")"}</span>
+  <span>Potencial de ganho</span><span><b>${fInt(d.potencial)}</b></span>
+  </div>`;
+}
+
+function drawMap(el, features, getVal, colorF, {onTap, tipf, labelF}={}){
+  const W = el.clientWidth || 340, pr = mercator(features, W), many = features.length>600, sf = css("--surface");
+  let g = features.map((f,i)=>`<path data-i="${i}" d="${pr.path(f)}" fill="${colorF(getVal(f))}" stroke="${sf}" stroke-width="${many?0.15:0.8}"/>`).join("");
+  if(labelF) g += features.map(f=>{ const c=pr.centroid(f); return `<text x="${c[0].toFixed(1)}" y="${c[1].toFixed(1)}" text-anchor="middle" dy="0.35em" style="fill:${css("--ink")};font-size:9px;pointer-events:none;paint-order:stroke;stroke:${sf};stroke-width:2px">${esc(labelF(f))}</text>`; }).join("");
+  el.insertAdjacentHTML("beforeend", `<svg class="map" viewBox="0 0 ${W} ${pr.H}">${g}</svg>`);
+  const svg = el.lastElementChild, ps = [...svg.querySelectorAll("path")];
+  let sel = null;
+  bindHover(svg, features, tipf, (f, t)=>{ if(sel){ sel.setAttribute("stroke",sf); sel.setAttribute("stroke-width", many?0.15:0.8); }
+    sel = t; t.setAttribute("stroke", css("--ink")); t.setAttribute("stroke-width", 1.5); t.parentNode.insertBefore(t, svg.querySelector("text")); onTap&&onTap(f); });
+  return {svg, recolor(getV, cf){ ps.forEach(p=>p.setAttribute("fill", cf(getV(features[+p.dataset.i])))); }};
+}
+
+// ============================================================ ABA: Brasil
+const RENDER = {};
+RENDER.brasil = el => {
+  const nA = M.candidatos.adv26.split(" (")[0], nA22 = M.candidatos.adv22.split(" (")[0];
+  const nSit = d3.rollup(MUN, v=>v.length, d=>d.sit_saldo);
+  el.innerHTML = `
+  <h2>Visão Brasil</h2>
+  <p class="note">Brasil inclui o exterior. Penetração = votos ÷ eleitorado apto (não é distorcida pelo comparecimento).</p>
+  <div class="kpis">
+    <div class="kpi"><div class="l"><span class="dot" style="background:var(--lula)"></span>Lula 1T26</div><div class="v">${fMi(B.lula_26)}</div><div class="d">${fPct(B.pv_l26)} dos válidos · <span class="neg">${fMiS(B.d_lula)}</span> vs 2T22</div></div>
+    <div class="kpi"><div class="l"><span class="dot" style="background:var(--adv)"></span>${esc(nA)} 1T26</div><div class="v">${fMi(B.adv_26)}</div><div class="d">${fPct(B.pv_a26)} · ${fMiS(B.d_adv)} vs ${esc(nA22)} 2T22</div></div>
+    <div class="kpi"><div class="l">Penetração de Lula</div><div class="v">${fPct(B.pen_l26)}</div><div class="d"><span class="neg">${fPP(B.d_pen_l)}</span> (2T22: ${fPct(B.pen_l22)})</div></div>
+    <div class="kpi"><div class="l">Saldo Lula − ${esc(nA)}</div><div class="v ${sgnCls(B.saldo26)}">${fMiS(B.saldo26)}</div><div class="d">2T22: ${fMiS(B.saldo22)} · variação ${fMiS(B.d_saldo)}</div></div>
+    <div class="kpi"><div class="l">Abstenção</div><div class="v">${fPct(B.abs26)}</div><div class="d">${fPP(B.d_abs)} vs 2T22 (${fPct(B.abs22)})</div></div>
+    <div class="kpi"><div class="l"><span class="dot" style="background:var(--terc)"></span>Terceiros 1T26</div><div class="v">${fMi(B.outros_26)}</div><div class="d">${fPct(B.pv_o26)} dos válidos</div></div>
+    <div class="kpi"><div class="l">Brancos + nulos</div><div class="v">${fMi(B.bn_26)}</div><div class="d">${fPct(B.bnp26)} do comparecimento (2T22: ${fPct(B.bnp22)})</div></div>
+    <div class="kpi"><div class="l">Eleitorado apto</div><div class="v">${fMi(B.aptos_26)}</div><div class="d">${fMiS(B.d_aptos)} (${fPP(B.d_aptos_pct).replace(" pp","%")}) vs 2022</div></div>
+  </div>
+
+  <h3>Para onde foi o voto perdido</h3>
+  <p class="note">Estimativa <b>agregada</b> (não é migração individual de eleitores). Na escala do eleitorado de 2026, a queda de penetração de Lula equivale a <b>${fMi(B.perda_esc)}</b> de votos. Como as parcelas do eleitorado (abstenção + brancos/nulos + Lula + adversário + terceiros) sempre somam 100%, a queda de Lula é igual à soma do que cresceu nas outras parcelas. Um valor negativo indica parcela que encolheu.</p>
+  <div class="card" id="br-dest"></div>
+
+  <h3>Saldo Lula × adversário por município</h3>
+  <div class="kpis" id="br-sit"></div>
+
+  <h3>Estoque em disputa para o 2T26</h3>
+  <p class="note">Estoque = votos de terceiros + brancos/nulos + abstenção acima da média histórica do município (1T22/2T22). Déficit = votos de ${esc(nA)} − votos de Lula no 1T26.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="l">Déficit nacional de Lula</div><div class="v neg">${fMi(B.deficit)}</div><div class="d">diferença para ${esc(nA)}</div></div>
+    <div class="kpi"><div class="l">Estoque em disputa</div><div class="v">${fMi(M.brasil_sem_exterior.estoque)}</div><div class="d">terceiros ${fMi(B.outros_26)} · brancos/nulos ${fMi(B.bn_26)} · abstenção excedente ${fMi(M.brasil_sem_exterior.abst_exc)}</div></div>
+    <div class="kpi"><div class="l">Municípios em que Lula está atrás e o estoque supera o déficit</div><div class="v">${fInt(MUN.filter(d=>d.virada==="possivel").length)}</div><div class="d">${fMi(d3.sum(MUN.filter(d=>d.virada==="possivel"),d=>d.aptos_26))} de eleitores</div></div>
+    <div class="kpi"><div class="l">Potencial de ganho (soma)</div><div class="v">${fMi(M.brasil_sem_exterior.potencial)}</div><div class="d">fórmula na aba Regras</div></div>
+  </div>
+
+  <h3>Mapa por UF — variação da penetração de Lula</h3>
+  <div class="card"><div id="br-map"></div><div class="legend" id="br-leg"></div><div class="info" id="br-info" style="margin-top:8px"></div></div>
+
+  <h3>Ranking de UFs por perda absoluta de votos de Lula</h3>
+  <div class="card" id="br-rank"></div>
+
+  <h3>Regiões</h3><div id="br-reg"></div>
+  <h3>UFs</h3><div id="br-uf"></div>`;
+
+  hbar(el.querySelector("#br-dest"), [
+    {label:"Terceiros (1T26)", value:B.dest_terc},
+    {label:"Abstenção", value:B.dest_abst},
+    {label:"Brancos e nulos", value:B.dest_bn},
+    {label:"Adversário (líquido)", value:B.dest_adv},
+  ], {fmt:fKS, color:d=>d.value<0?css("--axis"):css("--ink-2")});
+  el.querySelector("#br-dest").insertAdjacentHTML("beforeend",`<p class="small">Adversário (líquido) = variação da penetração de ${esc(nA)} (1T26) frente a ${esc(nA22)} (2T22). Soma = ${fK(B.dest_terc+B.dest_abst+B.dest_bn+B.dest_adv)} = perda de Lula na escala de 2026. O adversário também perdeu penetração (${fPP(B.d_pen_a)}): os terceiros absorveram votos dos dois polos.</p>`);
+
+  el.querySelector("#br-sit").innerHTML = ["virou_contra","encolheu","aumentou","virou_favor"].map(k=>{
+    const sub = MUN.filter(d=>d.sit_saldo===k);
+    return `<div class="kpi"><div class="l">${SIT[k]}</div><div class="v">${fInt(nSit.get(k)||0)}</div><div class="d">${fMi(d3.sum(sub,d=>d.aptos_26))} de eleitores</div></div>`; }).join("");
+
+  const ufBy = new Map(UFS.map(u=>[u.uf,u]));
+  const L = LAYERS.d_pen_l, cf = layerColor("d_pen_l");
+  const info = el.querySelector("#br-info");
+  info.innerHTML = `<span class="small">Toque em uma UF.</span>`;
+  drawMap(el.querySelector("#br-map"), D.geo_ufs.features, f=>ufBy.get(f.properties.id)?.d_pen_l, cf, {
+    labelF:f=>{const u=ufBy.get(f.properties.id); return `${f.properties.id} ${nf1.format(u.d_pen_l)}`;},
+    tipf:f=>{const u=ufBy.get(f.properties.id); return `<b>${u.uf}</b><br>Lula ${fSig(u.d_lula)} votos<br>Penetração ${fPP(u.d_pen_l)}<br>% válidos ${fPct(u.pv_l22)} → ${fPct(u.pv_l26)}`;},
+    onTap:f=>{const u=ufBy.get(f.properties.id); info.innerHTML = `<h4>${u.uf}</h4><div class="g"><span>Lula 2T22 → 1T26</span><span>${fInt(u.lula_22)} → ${fInt(u.lula_26)} (<b class="neg">${fSig(u.d_lula)}</b>)</span><span>% válidos</span><span>${fPct(u.pv_l22)} → ${fPct(u.pv_l26)}</span><span>Penetração</span><span>${fPct(u.pen_l22)} → ${fPct(u.pen_l26)} (${fPP(u.d_pen_l)})</span><span>Saldo</span><span>${fSig(u.saldo22)} → ${fSig(u.saldo26)}</span><span>Abstenção</span><span>${fPct(u.abs22)} → ${fPct(u.abs26)}</span><span>Terceiros</span><span>${fInt(u.outros_26)} (${fPct(u.pv_o26)})</span></div> <button class="btn" onclick="openMapUF('${u.uf}')">Ver municípios no mapa</button>`;}
+  });
+  legend(el.querySelector("#br-leg"), "d_pen_l");
+
+  const rk = UFS.slice().sort((a,b)=>a.d_lula-b.d_lula);
+  hbar(el.querySelector("#br-rank"), rk, {label:d=>d.uf==="ZZ"?"Exterior":d.uf, value:d=>d.d_lula, fmt:fKS, rowH:22, color:d=>d.d_lula<0?css("--lula"):css("--good"),
+    sub:d=>`<b>${d.uf}</b><br>${fSig(d.d_lula)} votos (${fPP(d.d_pen_l)} de penetração)`});
+
+  const cols = [
+    {k:"uf",t:"UF",l:1}, {k:"d_lula",t:"Δ votos Lula",f:fSig,cls:sgnCls}, {k:"d_pen_l",t:"Δ penetr.",f:fPP,cls:sgnCls},
+    {k:"pv_l22",t:"Lula 2T22",f:fPct}, {k:"pv_l26",t:"Lula 1T26",f:fPct}, {k:"pv_a26",t:"Adv. 1T26",f:fPct}, {k:"pv_o26",t:"Terceiros",f:fPct},
+    {k:"saldo22",t:"Saldo 2T22",f:fSig,cls:sgnCls}, {k:"saldo26",t:"Saldo 1T26",f:fSig,cls:sgnCls}, {k:"d_saldo",t:"Δ saldo",f:fSig,cls:sgnCls},
+    {k:"abs22",t:"Abst. 2T22",f:fPct}, {k:"abs26",t:"Abst. 1T26",f:fPct}, {k:"d_abs",t:"Δ abst.",f:fPP}, {k:"bnp26",t:"Br+nulos",f:fPct},
+    {k:"d_aptos_pct",t:"Δ aptos",f:v=>fPP(v).replace(" pp","%")}, {k:"estoque",t:"Estoque",f:fInt}, {k:"deficit",t:"Déficit",f:fSig}];
+  table(el.querySelector("#br-reg"), REG.map(r=>({...r, uf:r.regiao})), cols, {sort:"d_lula", desc:false, limit:10});
+  table(el.querySelector("#br-uf"), UFS.filter(u=>u.uf!=="ZZ"), cols, {sort:"d_lula", desc:false, limit:30, csvName:"ufs_2t22_1t26.csv"});
+};
+
+// ============================================================ ABA: mapa municipal
+let mapState = {uf:"", layer:"d_pen_l"};
+window.openMapUF = uf => { mapState.uf = uf; rendered.mapa = false; go("mapa"); };
+RENDER.mapa = el => {
+  el.innerHTML = `<h2>Mapa municipal</h2>
+  <div class="row"><select id="mp-uf" aria-label="UF">${ufOptions("Brasil (todas as UFs)")}</select>
+  <select id="mp-layer" aria-label="Camada">${Object.entries(LAYERS).map(([k,l])=>`<option value="${k}">${l.rot}</option>`).join("")}</select></div>
+  <div class="card"><div id="mp-map"></div><div class="legend" id="mp-leg"></div></div>
+  <div class="card info" id="mp-info"></div>
+  <p class="note">Sorriso, Nova Ubiratã e Boa Esperança do Norte (MT) aparecem somados (área comparável; o último foi criado após 2022). Exterior fora do mapa.</p>`;
+  const s1 = el.querySelector("#mp-uf"), s2 = el.querySelector("#mp-layer");
+  s1.value = mapState.uf; s2.value = mapState.layer;
+  const info = el.querySelector("#mp-info");
+  let map;
+  function draw(){
+    const box = el.querySelector("#mp-map"); box.innerHTML = ""; info.innerHTML = muniInfo(null);
+    const ufc = mapState.uf ? UFC[mapState.uf] : null;
+    const feats = D.geo_municipios.features.filter(f=>!ufc || f.properties.id.startsWith(ufc));
+    const cf = layerColor(mapState.layer);
+    map = drawMap(box, feats, f=>BYID.get(f.properties.id)?.[mapState.layer], cf, {
+      tipf:f=>{const d=BYID.get(f.properties.id); return d?`<b>${esc(d.nome)}</b> (${d.uf})<br>${LAYERS[mapState.layer].rot}: ${LAYERS[mapState.layer].tipo==="cat"? (LAYERS[mapState.layer].cats[d[mapState.layer]]?.rot) : LAYERS[mapState.layer].fmt(d[mapState.layer])}<br>Lula ${fSig(d.d_lula)} votos`:"";},
+      onTap:f=>{ info.innerHTML = muniInfo(BYID.get(f.properties.id)); }});
+    legend(el.querySelector("#mp-leg"), mapState.layer);
+  }
+  s1.onchange = () => { mapState.uf = s1.value; draw(); };
+  s2.onchange = () => { mapState.layer = s2.value; map.recolor(f=>BYID.get(f.properties.id)?.[mapState.layer], layerColor(mapState.layer)); legend(el.querySelector("#mp-leg"), mapState.layer); };
+  draw();
+};
+
+// ============================================================ ABA: onde perdeu
+RENDER.perdas = el => {
+  el.innerHTML = `<h2>Onde Lula perdeu votos</h2>
+  <div class="row"><select id="pd-uf">${ufOptions()}</select>
+  <label class="small">Eleitorado mínimo (lista percentual) <select id="pd-min"><option value="10000">10 mil</option><option value="50000">50 mil</option><option value="200000">200 mil</option><option value="0">qualquer</option></select></label></div>
+  <h3>Maior perda absoluta (votos)</h3><div id="pd-abs"></div>
+  <h3>Maior perda relativa (penetração, pp do eleitorado)</h3>
+  <p class="note">Também mostra a variação percentual de votos (Δ votos ÷ votos de 2T22).</p><div id="pd-pct"></div>
+  <h3>Onde Lula cresceu</h3><div id="pd-gan"></div>`;
+  const base = [
+    {k:"nome",t:"Município",l:1}, {k:"uf",t:"UF",l:1}, {k:"d_lula",t:"Δ votos",f:fSig,cls:sgnCls}, {k:"var_pct",t:"Δ % votos",f:v=>fPP(v).replace(" pp","%"),cls:sgnCls},
+    {k:"d_pen_l",t:"Δ penetr.",f:fPP,cls:sgnCls}, {k:"pv_l22",t:"Lula 2T22",f:fPct}, {k:"pv_l26",t:"Lula 1T26",f:fPct}, {k:"pv_o26",t:"Terceiros",f:fPct},
+    {k:"d_abs",t:"Δ abst.",f:fPP}, {k:"aptos_26",t:"Aptos",f:fInt}, {k:"seg",t:"Segmento",l:1,f:segCell}];
+  MUN.forEach(d=>d.var_pct = d.lula_22? 100*d.d_lula/d.lula_22 : null);
+  const f = () => { const uf=el.querySelector("#pd-uf").value; return MUN.filter(d=>!uf||d.uf===uf); };
+  const tA = table(el.querySelector("#pd-abs"), f(), base, {sort:"d_lula", desc:false, csvName:"perda_absoluta.csv"});
+  const mins = () => +el.querySelector("#pd-min").value;
+  const tP = table(el.querySelector("#pd-pct"), f().filter(d=>d.aptos_26>=mins()), base, {sort:"d_pen_l", desc:false, csvName:"perda_relativa.csv"});
+  const tG = table(el.querySelector("#pd-gan"), f().filter(d=>d.d_lula>0), base, {sort:"d_lula", desc:true, limit:15});
+  const upd = () => { tA.update(f()); tP.update(f().filter(d=>d.aptos_26>=mins())); tG.update(f().filter(d=>d.d_lula>0)); };
+  el.querySelector("#pd-uf").onchange = upd; el.querySelector("#pd-min").onchange = upd;
+};
+
+// ============================================================ ABA: abstenção
+RENDER.abstencao = el => {
+  const red = MUN.filter(d=>d.pv_l22>=M.parametros.reduto_pv);
+  el.innerHTML = `<h2>Abstenção</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="l">Abstenção 2T22 → 1T26</div><div class="v">${fPct(B.abs26)}</div><div class="d">2T22 ${fPct(B.abs22)} · ${fPP(B.d_abs)}</div></div>
+    <div class="kpi"><div class="l">Abstenção histórica (média 1T22/2T22)</div><div class="v">${fPct(B.abs_hist)}</div><div class="d">1T26 ${fPP(B.abs_exc_pp)} acima</div></div>
+    <div class="kpi"><div class="l">Abstenção excedente (soma municipal)</div><div class="v">${fMi(M.brasil_sem_exterior.abst_exc)}</div><div class="d">eleitores acima da média histórica local</div></div>
+    <div class="kpi"><div class="l">Abstenção excedente em redutos de Lula</div><div class="v">${fMi(d3.sum(red,d=>d.abst_exc))}</div><div class="d">${fInt(red.length)} municípios com Lula ≥ ${M.parametros.reduto_pv}% no 2T22</div></div>
+  </div>
+  <div class="row"><select id="ab-uf">${ufOptions()}</select></div>
+  <h3>Abstenção × força de Lula no 2T22</h3>
+  <p class="note">Cada círculo é um município (área proporcional ao eleitorado). Eixo vertical: abstenção 1T26 menos a histórica. O quadrante superior direito reúne redutos com abstenção acima do padrão local.</p>
+  <div class="card" id="ab-sc"></div>
+  <h3>Redutos com abstenção alta ou crescente (segmento Mobilização + Reconquista)</h3><div id="ab-red"></div>
+  <h3>Onde a abstenção mais cresceu (eleitorado ≥ 10 mil)</h3><div id="ab-cres"></div>`;
+  const cols = [{k:"nome",t:"Município",l:1},{k:"uf",t:"UF",l:1},{k:"abst_exc",t:"Abst. excedente",f:fInt},{k:"abs_hist",t:"Abst. hist.",f:fPct},{k:"abs26",t:"Abst. 1T26",f:fPct},
+    {k:"abs_exc_pp",t:"Acima hist.",f:fPP},{k:"d_abs",t:"Δ vs 2T22",f:fPP},{k:"pv_l22",t:"Lula 2T22",f:fPct},{k:"d_lula",t:"Δ votos Lula",f:fSig,cls:sgnCls},{k:"aptos_26",t:"Aptos",f:fInt},{k:"seg",t:"Segmento",l:1,f:segCell}];
+  const sub = () => { const uf=el.querySelector("#ab-uf").value; return MUN.filter(d=>!uf||d.uf===uf); };
+  const t1 = table(el.querySelector("#ab-red"), sub().filter(d=>d.pv_l22>=M.parametros.reduto_pv && (d.abs26>=M.parametros.abst_alta || d.abs_exc_pp>=M.parametros.abst_cresc)), cols, {sort:"abst_exc", csvName:"redutos_abstencao.csv"});
+  const t2 = table(el.querySelector("#ab-cres"), sub().filter(d=>d.aptos_26>=10000), cols, {sort:"abs_exc_pp"});
+  function sc(){ const box=el.querySelector("#ab-sc"); box.innerHTML="";
+    scatter(box, sub(), {x:d=>d.pv_l22, y:d=>d.abs_exc_pp, xl:"Lula % válidos 2T22", yl:"abstenção 1T26 − histórica (pp)", xfmt:v=>v+"%", yfmt:v=>v,
+      color:d=>css(SEG[d.seg].cor), tipf:d=>`<b>${esc(d.nome)}</b> (${d.uf})<br>Lula 2T22 ${fPct(d.pv_l22)}<br>Abstenção ${fPct(d.abs26)} (hist. ${fPct(d.abs_hist)})<br>Excedente: ${fInt(d.abst_exc)} eleitores`});
+    box.insertAdjacentHTML("beforeend", `<div class="legend">${Object.entries(SEG).map(([k,s])=>`<span><span class="sw" style="background:${css(s.cor)}"></span>${s.rot}</span>`).join("")}</div>`); }
+  sc();
+  el.querySelector("#ab-uf").onchange = () => { t1.update(sub().filter(d=>d.pv_l22>=M.parametros.reduto_pv && (d.abs26>=M.parametros.abst_alta || d.abs_exc_pp>=M.parametros.abst_cresc))); t2.update(sub().filter(d=>d.aptos_26>=10000)); sc(); };
+};
+
+// ============================================================ ABA: perfil socioeconômico
+RENDER.perfil = el => {
+  const IND = M.indicadores, segs = ["reconquista","mobilizacao","disputa","consolidado","equilibrio","adverso","todos"];
+  const P = Object.fromEntries(M.perfil_segmentos.map(p=>[p.seg,p]));
+  const fmtI = (k,v) => v==null?"–": IND[k]?.unid==="R$"? "R$ "+fInt(v) : IND[k]?.unid==="%"? fPct(v) : nf1.format(v);
+  const rows = [["n","Municípios",v=>fInt(v)],["aptos_26","Eleitorado apto",fK],["d_lula","Δ votos Lula",fKS],["d_pen_l","Δ penetração (média pond.)",fPP],["abs26","Abstenção 1T26",fPct],["potencial","Potencial de ganho",fK]]
+    .concat(Object.keys(IND).map(k=>[k, IND[k].rotulo, v=>fmtI(k,v)]));
+  el.innerHTML = `<h2>Perfil socioeconômico por segmento</h2>
+  <p class="note"><b>Associação territorial</b>: médias dos municípios de cada segmento, ponderadas pelo eleitorado apto de 2026. Nada aqui descreve o comportamento de eleitores individuais nem estabelece causa.</p>
+  <div class="tblwrap"><table><thead><tr><th>Indicador</th>${segs.map(s=>`<th>${s==="todos"?"Todos":segDot(s)+" "+SEG[s].rot}</th>`).join("")}</tr></thead>
+  <tbody>${rows.map(([k,l,f])=>`<tr><td>${l}</td>${segs.map(s=>`<td>${f(P[s][k])}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+  <h3>Variação de Lula × indicador</h3>
+  <div class="row"><select id="pf-ind">${Object.entries(IND).filter(([k])=>k!=="pv_l22").map(([k,v])=>`<option value="${k}">${v.rotulo}</option>`).join("")}</select>
+  <select id="pf-y"><option value="d_pen_l">Δ penetração de Lula (pp)</option><option value="d_abs">Δ abstenção (pp)</option><option value="pv_l26">Lula % válidos 1T26</option></select>
+  <select id="pf-uf">${ufOptions()}</select></div>
+  <div class="card"><div id="pf-r" class="small"></div><div id="pf-sc"></div></div>
+  <h3>Correlação ponderada (Brasil, todos os municípios)</h3>
+  <p class="note">r de Pearson ponderado pelo eleitorado. |r| &lt; 0,2 = associação fraca. Correlação territorial não implica causa.</p>
+  <div id="pf-cor"></div>`;
+  const wfit = (data, x, y, w) => { const d = data.filter(r=>x(r)!=null && y(r)!=null); const W=d3.sum(d,w);
+    const mx=d3.sum(d,r=>w(r)*x(r))/W, my=d3.sum(d,r=>w(r)*y(r))/W;
+    const sxy=d3.sum(d,r=>w(r)*(x(r)-mx)*(y(r)-my)), sxx=d3.sum(d,r=>w(r)*(x(r)-mx)**2), syy=d3.sum(d,r=>w(r)*(y(r)-my)**2);
+    const b=sxy/sxx; return {a:my-b*mx, b, r:sxy/Math.sqrt(sxx*syy), n:d.length}; };
+  const YL = {d_pen_l:["Δ penetração (pp)",fPP], d_abs:["Δ abstenção (pp)",fPP], pv_l26:["Lula % válidos 1T26",fPct]};
+  function draw(){
+    const k = el.querySelector("#pf-ind").value, yk = el.querySelector("#pf-y").value, uf = el.querySelector("#pf-uf").value;
+    const data = MUN.filter(d=>(!uf||d.uf===uf) && d[k]!=null && d[yk]!=null);
+    const logx = ["densidade","pib_pc"].includes(k);
+    const tx = v => logx? Math.log10(v) : v;
+    const fit = wfit(data, d=>tx(d[k]), d=>d[yk], d=>d.aptos_26);
+    el.querySelector("#pf-r").innerHTML = `r ponderado = <b>${fit.r.toFixed(2).replace(".",",")}</b> · ${fInt(fit.n)} municípios${logx?" · eixo x em escala log":""}`;
+    const box = el.querySelector("#pf-sc"); box.innerHTML = "";
+    scatter(box, data, {x:d=>d[k], y:d=>d[yk], xl:IND[k].rotulo, yl:YL[yk][0], xlog:logx,
+      xfmt: IND[k].unid==="%"? v=>v+"%" : d3.compact,
+      color:d=>css(SEG[d.seg].cor), line: logx? null : [fit.a, fit.b],
+      tipf:d=>`<b>${esc(d.nome)}</b> (${d.uf})<br>${IND[k].rotulo}: ${fmtI(k,d[k])}<br>${YL[yk][0]}: ${YL[yk][1](d[yk])}<br>${SEG[d.seg].rot}`});
+    box.insertAdjacentHTML("beforeend", `<div class="legend">${Object.entries(SEG).map(([k,s])=>`<span><span class="sw" style="background:${css(s.cor)}"></span>${s.rot}</span>`).join("")}${logx?"":"<span>— reta: regressão ponderada</span>"}</div>`);
+  }
+  ["#pf-ind","#pf-y","#pf-uf"].forEach(s=>el.querySelector(s).onchange=draw);
+  draw();
+  const cr = Object.entries(M.correlacoes).map(([k,v])=>({k, ind:IND[k].rotulo, ...v}));
+  const fr = v => v==null?"–":v.toFixed(2).replace(".",",");
+  table(el.querySelector("#pf-cor"), cr, [{k:"ind",t:"Indicador",l:1},{k:"d_pen_l",t:"× Δ penetr. Lula",f:fr},{k:"d_abs",t:"× Δ abstenção",f:fr},{k:"pv_l26",t:"× Lula % 1T26",f:fr}], {sort:"d_pen_l", limit:30});
+};
+
+// ============================================================ ABA: territórios prioritários
+RENDER.prioritarios = el => {
+  let segSel = ["reconquista","mobilizacao","disputa"];
+  el.innerHTML = `<h2>Territórios prioritários</h2>
+  <p class="note">Ordenados por <b>potencial de ganho em votos absolutos</b> = votos de penetração perdidos desde o 2T22 (na escala do eleitorado de 2026) + abstenção excedente × % de Lula no 2T22. Fórmula completa na aba Regras.</p>
+  <div class="row"><select id="pr-uf">${ufOptions()}</select><input type="search" id="pr-q" placeholder="Buscar município" aria-label="Buscar município">
+  <select id="pr-vir"><option value="">Qualquer situação</option>${Object.entries(VIR).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select></div>
+  <div id="pr-seg"></div>
+  <div class="kpis" id="pr-k" style="margin-top:10px"></div>
+  <div id="pr-t" style="margin-top:10px"></div>`;
+  const cols = [{k:"nome",t:"Município",l:1,csv:"municipio"},{k:"uf",t:"UF",l:1},{k:"seg",t:"Segmento",l:1,f:segCell,csv:"segmento"},{k:"potencial",t:"Potencial",f:fInt},
+    {k:"aptos_26",t:"Aptos 1T26",f:fInt},{k:"d_lula",t:"Δ votos Lula",f:fSig,cls:sgnCls},{k:"d_pen_l",t:"Δ penetr.",f:fPP,cls:sgnCls},
+    {k:"pv_l22",t:"Lula 2T22",f:fPct},{k:"pv_l26",t:"Lula 1T26",f:fPct},{k:"abs26",t:"Abst. 1T26",f:fPct},{k:"abst_exc",t:"Abst. exced.",f:fInt},
+    {k:"outros_26",t:"Terceiros",f:fInt},{k:"bn_26",t:"Br+nulos",f:fInt},{k:"estoque",t:"Estoque",f:fInt},{k:"deficit",t:"Déficit",f:fSig},
+    {k:"virada",t:"Situação",l:1,f:v=>VIR[v]},{k:"id",t:"Cód. IBGE",l:1}];
+  const filt = () => { const uf=el.querySelector("#pr-uf").value, q=el.querySelector("#pr-q").value.trim().toLowerCase(), v=el.querySelector("#pr-vir").value;
+    return MUN.filter(d=>segSel.includes(d.seg) && (!uf||d.uf===uf) && (!v||d.virada===v) && (!q||d.nome.toLowerCase().includes(q))); };
+  const t = table(el.querySelector("#pr-t"), filt(), cols, {sort:"potencial", limit:30, csvName:"territorios_prioritarios.csv"});
+  const kp = () => { const f=filt(); el.querySelector("#pr-k").innerHTML =
+    `<div class="kpi"><div class="l">Municípios</div><div class="v">${fInt(f.length)}</div></div>`+
+    `<div class="kpi"><div class="l">Eleitorado</div><div class="v">${fMi(d3.sum(f,d=>d.aptos_26))}</div></div>`+
+    `<div class="kpi"><div class="l">Potencial de ganho</div><div class="v">${fMi(d3.sum(f,d=>d.potencial))}</div></div>`+
+    `<div class="kpi"><div class="l">Δ votos Lula</div><div class="v neg">${fMiS(d3.sum(f,d=>d.d_lula))}</div></div>`; };
+  const upd = () => { t.update(filt()); kp(); };
+  chips(el.querySelector("#pr-seg"), Object.entries(SEG).map(([k,s])=>({v:k,l:s.rot,sw:css(s.cor)})), segSel, s=>{segSel=s; upd();}, {multi:true});
+  ["#pr-uf","#pr-vir"].forEach(s=>el.querySelector(s).onchange=upd); el.querySelector("#pr-q").oninput = upd;
+  kp();
+};
+
+// ============================================================ ABA: regras e fontes
+RENDER.fontes = el => {
+  const p = M.parametros, v = M.validacao;
+  const n = d3.rollup(MUN, x=>x.length, d=>d.seg);
+  el.innerHTML = `<h2>Regras de segmentação</h2>
+  <p class="note">Aplicadas em ordem; cada município recebe o primeiro segmento cuja regra atende. "Reduto" = Lula ≥ ${p.reduto_pv}% dos válidos no 2T22.</p>
+  <div class="rule"><b>${segDot("reconquista")} Reconquista</b> (${fInt(n.get("reconquista"))}) — reduto <b>e</b> variação da penetração de Lula ≤ ${nf1.format(p.queda_relevante_pen)} pp (Brasil: ${fPP(B.d_pen_l)}).</div>
+  <div class="rule"><b>${segDot("mobilizacao")} Mobilização</b> (${fInt(n.get("mobilizacao"))}) — reduto <b>e</b> (abstenção 1T26 ≥ ${p.abst_alta}% <b>ou</b> abstenção 1T26 ≥ histórica + ${p.abst_cresc} pp).</div>
+  <div class="rule"><b>${segDot("disputa")} Disputa</b> (${fInt(n.get("disputa"))}) — Lula entre ${p.adverso_pv}% e ${p.reduto_pv}% dos válidos no 2T22 <b>e</b> eleitorado apto ≥ ${fInt(p.disputa_aptos)}.</div>
+  <div class="rule"><b>${segDot("consolidado")} Consolidado</b> (${fInt(n.get("consolidado"))}) — demais redutos (contexto).</div>
+  <div class="rule"><b>${segDot("equilibrio")} Equilíbrio (pequeno porte)</b> (${fInt(n.get("equilibrio"))}) — ${p.adverso_pv}–${p.reduto_pv}% com eleitorado &lt; ${fInt(p.disputa_aptos)} (contexto).</div>
+  <div class="rule"><b>${segDot("adverso")} Adverso</b> (${fInt(n.get("adverso"))}) — Lula &lt; ${p.adverso_pv}% no 2T22 (contexto).</div>
+
+  <h2>Fórmulas</h2>
+  <div class="rule"><b>Penetração</b> = votos ÷ eleitorado apto do pleito. <b>Variação</b> sempre 2T22 → 1T26.</div>
+  <div class="rule"><b>Adversário principal</b>: ${esc(M.candidatos.adv26)} no 1T26, comparado a ${esc(M.candidatos.adv22)} no 2T22.</div>
+  <div class="rule"><b>Abstenção histórica</b> = (abstenções 1T22 + 2T22) ÷ (aptos 1T22 + 2T22). <b>Abstenção excedente</b> = max(0, abst% 1T26 − histórica) × aptos 1T26. (O 1T22 entra só aqui.)</div>
+  <div class="rule"><b>Para onde foi o voto perdido</b> (identidade contábil, em frações do eleitorado): −Δpen(Lula) = Δabst% + Δ(brancos+nulos)/aptos + terceiros/aptos + Δpen(adversário). Multiplicado pelo eleitorado de 2026. É saldo agregado, nunca migração individual.</div>
+  <div class="rule"><b>Estoque em disputa</b> = terceiros 1T26 + brancos/nulos 1T26 + abstenção excedente. <b>Déficit</b> = adversário − Lula (1T26). Virada aritmeticamente possível quando estoque &gt; déficit.</div>
+  <div class="rule"><b>Potencial de ganho</b> = max(0, −Δpenetração Lula) × aptos 1T26 + abstenção excedente × (Lula % válidos 2T22).</div>
+  <div class="rule"><b>Situação do saldo</b>: virou contra (saldo 2T22 &gt; 0 e 1T26 &lt; 0) · virou a favor · encolheu/aumentou (variação do saldo em pp dos válidos).</div>
+
+  <h2>Fontes, ciclo e status</h2>
+  <div class="tblwrap"><table><thead><tr><th>Fonte</th><th class="l">Ciclo</th><th class="l">Status</th><th class="l">Gerado</th></tr></thead><tbody>
+  ${M.fontes.map(f=>`<tr><td style="white-space:normal;min-width:220px"><a href="${f.url}" style="color:inherit">${esc(f.nome)}</a></td><td class="l">${esc(f.ciclo)}</td><td class="l">${esc(f.status)}</td><td class="l">${esc(f.gerado||"")}</td></tr>`).join("")}
+  </tbody></table></div>
+  <p class="small">Data de extração: ${new Date(M.data_extracao).toLocaleString("pt-BR")}. Candidatos do 1T26 (outros): ${Object.entries(M.outros_1t26).map(([k,x])=>`${esc(k)} ${fInt(x)}`).join(" · ")}.</p>
+
+  <h2>Conferência com o TSE</h2>
+  <p class="note">${v.ok?'<span class="ok">✓ Todos os totais conferem.</span>':'<b class="neg">Há divergências.</b>'} 1T26: soma municipal × divulgação oficial do TSE por UF (resultados.tse.jus.br). 2T22: total Brasil × resultado oficial (Lula ${fInt(v.oficial_2t22.lula)}, Bolsonaro ${fInt(v.oficial_2t22.adv)}); por UF, Lula + Bolsonaro = votos válidos do arquivo de detalhe.</p>
+  <div id="fx-val"></div>
+
+  <h2>Limitações</h2>
+  <ul class="small">
+   <li>1T26 é totalização oficial do TSE de ${M.fontes[1].gerado}; pode haver atualizações (recontagens, decisões judiciais).</li>
+   <li>Leitura sequencial 2T22 → 1T26 por premissa de polarização; comparar um 2º turno com um 1º turno mistura efeito de candidatos alternativos (terceiros) com perda de voto.</li>
+   <li>Socioeconômico do Censo 2022 e PIB 2022 (defasados). Bolsa Família = mês mais recente do MI Social/MDS.</li>
+   <li>Boa Esperança do Norte (MT), criado após 2022, é somado a Sorriso e Nova Ubiratã (área comparável). Exterior só no total Brasil.</li>
+   <li>Todas as associações são territoriais (municípios), sem inferência sobre indivíduos.</li>
+  </ul>`;
+  table(el.querySelector("#fx-val"), v.tabela.map(r=>({...r, ok:r.ok_1t26&&r.soma_cand_2t22_ok?"✓":"✗"})), [
+    {k:"uf",t:"UF",l:1},{k:"lula_1t26",t:"Lula 1T26",f:fInt},{k:"lula_1t26_tse",t:"TSE",f:fInt},{k:"adv_1t26",t:"Adv. 1T26",f:fInt},{k:"adv_1t26_tse",t:"TSE",f:fInt},
+    {k:"validos_1t26",t:"Válidos 1T26",f:fInt},{k:"validos_1t26_tse",t:"TSE",f:fInt},{k:"lula_2t22",t:"Lula 2T22",f:fInt},{k:"adv_2t22",t:"Bolsonaro 2T22",f:fInt},{k:"ok",t:"OK",l:1}],
+    {sort:"uf", desc:false, limit:40});
+};
+
+// ============================================================ init
+const UFC = {RO:"11",AC:"12",AM:"13",RR:"14",PA:"15",AP:"16",TO:"17",MA:"21",PI:"22",CE:"23",RN:"24",PB:"25",PE:"26",AL:"27",SE:"28",BA:"29",MG:"31",ES:"32",RJ:"33",SP:"35",PR:"41",SC:"42",RS:"43",MS:"50",MT:"51",GO:"52",DF:"53"};
+loadData().then(d => {
+  D = d; M = d.meta; MUN = rowsToObjs(d.municipios); UFS = rowsToObjs(d.ufs); REG = rowsToObjs(d.regioes); B = M.brasil;
+  BYID = new Map(MUN.map(x=>[x.id,x]));
+  statusBar(); buildTabs();
+}).catch(e => { document.getElementById("main").innerHTML = `<p class="loading">Erro ao carregar dados: ${esc(e.message)}.<br>Abra via servidor local (ver README) ou use o arquivo painel_standalone.html.</p>`; console.error(e); });
+</script>
+</body>
+</html>
