@@ -49,7 +49,7 @@ html,body{margin:0;background:var(--page);color:var(--ink);font:15px/1.45 system
 header{padding:14px 16px 0;max-width:1100px;margin:0 auto}
 h1{font-size:19px;margin:0 0 2px;letter-spacing:-.01em}
 .sub{color:var(--ink-2);font-size:13px;margin:0}
-nav{position:sticky;top:0;z-index:10;background:var(--page);border-bottom:1px solid var(--grid);margin-top:10px}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--page);border-bottom:1px solid var(--grid);margin-top:10px}
 nav .tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;max-width:1100px;margin:0 auto;padding:0 12px}
 nav .tabs::-webkit-scrollbar{display:none}
 nav button{flex:0 0 auto;border:0;background:none;color:var(--ink-2);font:inherit;font-size:14px;padding:10px 10px;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
@@ -311,8 +311,12 @@ function table(el, rows, cols, {limit=25, sort, desc=true, csvName}={}){
 function csv(rows, cols, name){
   const head = cols.map(c=>c.csv||c.k);
   const lines = [head.join(";")].concat(rows.map(r=>cols.map(c=>{ let v=r[c.k]; if(v==null) return ""; if(typeof v==="number") return String(v).replace(".",","); v=String(v); return /[;"\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v; }).join(";")));
-  const blob = new Blob(["﻿"+lines.join("\n")],{type:"text/csv;charset=utf-8"});
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  const text = "\ufeff"+lines.join("\n");
+  // No claude.ai (artifact), o download passa pela capability "downloads"; fora dele, link normal.
+  const viaLink = () => { const blob = new Blob([text],{type:"text/csv;charset=utf-8"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); };
+  if(!window.claude?.use) return viaLink();
+  window.claude.use("downloads").then(dl => dl ? dl.save({filename:name, data:text}).catch(e => { if(e?.code!=="declined") console.warn("CSV:", e?.code); }) : viaLink());
 }
 function chips(el, opts, sel, onChange, {multi=false}={}){
   el.classList.add("chips");
