@@ -1,0 +1,6 @@
+# Brutos baixados (grandes, reproduzíveis via scripts/01_download.py)
+raw/
+*.zip
+__pycache__/
+.env
+.DS_Store
