@@ -1,0 +1,11 @@
+{
+  "_doc": "Janelas de governo fixas. Nenhum card escolhe ano inicial ou final fora delas.",
+  "antes": {"rotulo": "Antes de Lula", "inicio": null, "fim": "2002-12"},
+  "lula12": {"rotulo": "Lula 1 e 2", "inicio": "2003-01", "fim": "2010-12"},
+  "dilma": {"rotulo": "Dilma", "inicio": "2011-01", "fim": "2016-08"},
+  "temer": {"rotulo": "Temer", "inicio": "2016-09", "fim": "2018-12"},
+  "bolsonaro": {"rotulo": "Bolsonaro", "inicio": "2019-01", "fim": "2022-12"},
+  "temer_bolsonaro": {"rotulo": "Temer e Bolsonaro", "inicio": "2016-09", "fim": "2022-12"},
+  "lula3": {"rotulo": "Lula 3", "inicio": "2023-01", "fim": null},
+  "ipca": "IPCA (IBGE, SIDRA 1737); o card informa o mês de referência dos reais"
+}

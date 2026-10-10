@@ -172,6 +172,18 @@ footer .falta{color:var(--red-ink)}
 .pop .bts a,.pop .bts button{font:inherit;font-size:14px;font-weight:800;padding:8px 10px;border-radius:10px;border:2px solid var(--red);background:var(--card);color:var(--ink);text-decoration:none;cursor:pointer;min-height:40px;display:inline-flex;align-items:center}
 .pop .bts .cheio{background:var(--red);color:var(--on-red)}
 .pop .aprox{font-size:12px;color:var(--ink-2);font-style:italic}
+/* ---------- cards ---------- */
+.cards-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 10px}
+.cards-bar select{font-size:16px;min-height:46px}
+.carrossel{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;-webkit-overflow-scrolling:touch}
+.carrossel .cd{flex:0 0 78%;max-width:320px;scroll-snap-align:start;display:flex;flex-direction:column;gap:8px}
+.carrossel img{width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:var(--soft);aspect-ratio:1080/1350}
+.carrossel .cd.status img{aspect-ratio:1080/1920}
+.carrossel .cd .bts{display:flex;gap:6px;flex-wrap:wrap}
+.carrossel .cd .bts button{flex:1 1 auto;font:inherit;font-size:14px;font-weight:800;min-height:44px;border-radius:10px;border:2px solid var(--red);background:var(--card);color:var(--ink);cursor:pointer}
+.carrossel .cd .bts .wa{background:var(--red);color:var(--on-red)}
+.carrossel .cd .meta{font-size:12px;color:var(--ink-2)}
+.cards-vazio{font-size:15px;color:var(--ink-2)}
 a{color:var(--red-ink)}
 [hidden]{display:none!important}
 @media (min-width:600px){ .hero h1{font-size:46px} .selo{width:112px;height:112px} .selo .n{font-size:48px} }
@@ -356,7 +368,7 @@ function escolhe(c){
   if(!c) return;
   $("#q").value = `${c.nome} (${c.uf})`; $("#sug").innerHTML = ""; $("#hint").hidden = true;
   try{ localStorage.setItem("cidade", c.id); }catch(e){}
-  try{ history.replaceState(null, "", "#c" + c.id); }catch(e){}
+  try{ history.replaceState(null, "", `#/${c.uf}/${slug(c.nome)}`); }catch(e){}
   const r = $("#resultado"); r.hidden = false;
   let h = `<div class="res-head"><h2>${esc(c.nome)}</h2><span class="uf">${UFN[c.uf]||c.uf}</span></div>`;
   if(c.acao){
@@ -374,16 +386,19 @@ function escolhe(c){
       <button role="tab" aria-selected="true" data-p="locais">Onde agir</button>
       <button role="tab" aria-selected="false" data-p="perfil">A cidade</button>
       <button role="tab" aria-selected="false" data-p="fed">Governo federal</button>
+      <button role="tab" aria-selected="false" data-p="cards">Cards para compartilhar</button>
     </div>
     <div class="painel" id="p-locais"><p class="loading">Carregando locais de votação…</p></div>
     <div class="painel" id="p-perfil" hidden></div>
-    <div class="painel" id="p-fed" hidden></div>`;
+    <div class="painel" id="p-fed" hidden></div>
+    <div class="painel" id="p-cards" hidden></div>`;
   r.innerHTML = h;
   ligaLinhas(r);
   const vu = $("#ver-uf"); if(vu) vu.onclick = () => { $("#uf").value = c.uf; porteSel = "todas"; desenhaPorte(); lista(); $("#h-onde").scrollIntoView({behavior:"smooth"}); };
   r.querySelector(".tabs").onclick = e => { const b = e.target.closest("button"); if(!b) return;
     r.querySelectorAll(".tabs button").forEach(x => x.setAttribute("aria-selected", x===b));
-    ["locais","perfil","fed"].forEach(p => $("#p-"+p).hidden = p !== b.dataset.p); };
+    ["locais","perfil","fed","cards"].forEach(p => $("#p-"+p).hidden = p !== b.dataset.p);
+    if(b.dataset.p === "cards") CARDS.abre(c); };
   r.scrollIntoView({behavior:"smooth", block:"start"});
   if(!c._doMapa && window.MAPA) MAPA.cidade(c, true);
   carrega(c.arq).then(d => {
@@ -731,8 +746,132 @@ $("#ver-peq").onclick = () => { porteSel = "peq"; desenhaPorte(); lista(); $("#h
   if(document.readyState === "complete") init(); else addEventListener("load", init);
 })();
 
+
+// ======================================================================= CARDS
+// Cards tipográficos gerados no navegador (canvas), do mais local ao mais amplo.
+const slug = s => norm(s).replace(/ /g, "-");
+const CARDS = (function(){
+  let BR = null, fmt = "feed", filtro = "todos", atual = null;
+  const cacheC = new Map();
+  const loadBR = () => BR ? Promise.resolve(BR) : fetch("cards/BR.json").then(r=>r.json()).then(j => BR = j);
+  const loadArq = a => { if(!cacheC.has(a)) cacheC.set(a, fetch(`cards/${a}.json`).then(r=>r.json()).catch(e => { cacheC.delete(a); throw e; })); return cacheC.get(a); };
+  const CAT = {todos:"Todos", hoje:"Hoje", historia:"História", comparacao:"Comparação"};
+  const NIV = {bairro:"Bairro", cidade:"Cidade", uf:"Estado", brasil:"Brasil"};
+
+  // ---------- desenho
+  function quebra(ctx, txt, w){ const p = txt.split(" "), l = []; let a = "";
+    for(const x of p){ const t = a ? a+" "+x : x; if(ctx.measureText(t).width > w && a){ l.push(a); a = x; } else a = t; } if(a) l.push(a); return l; }
+  function ajusta(ctx, txt, w, max, min, peso){ let t = max; do { ctx.font = `${peso} ${t}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`; t -= 4; } while(ctx.measureText(txt).width > w && t > min); }
+  function desenha(card, formato){
+    const W = 1080, H = formato === "status" ? 1920 : 1350, M = 72, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+    const x = cv.getContext("2d"); const F = (t,p=700) => `${p} ${t}px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif`;
+    const RODAPE = H - 200, TOPO = formato === "status" ? 150 : 60;
+    // conteúdo com escala automática: reduz até caber entre o topo e o rodapé
+    function conteudo(sc, pinta){
+      let y = TOPO + 250;
+      const cw = (W-2*M-40)/3;
+      if(card.tres){
+        card.tres.forEach(([rot,val],k) => { const cx = M + k*(cw+20);
+          if(pinta){ x.fillStyle = k===1 ? "rgba(255,255,255,.14)" : "rgba(255,255,255,.24)"; x.beginPath(); x.roundRect(cx, y, cw, 290*sc, 24); x.fill();
+            x.fillStyle = "#fff"; x.font = F(30*sc,700); quebra(x, rot, cw-40).forEach((l,i)=>x.fillText(l, cx+20, y+22+i*36*sc));
+            ajusta(x, val, cw-40, 96*sc, 36, 900); x.fillText(val, cx+20, y+140*sc); } });
+        y += 320*sc;
+      } else if(card.grande){
+        ajusta(x, card.grande, W-2*M, 230*sc, 70, 900); const t = parseFloat(x.font.split(" ")[1]);
+        if(pinta) x.fillText(card.grande, M, y); y += t * 1.08;
+        if(card.rotulo){ x.font = F(54*sc,700); if(pinta) x.fillText(card.rotulo, M, y); y += 76*sc; }
+        y += 14*sc;
+      }
+      x.font = F(48*sc,600); quebra(x, card.texto, W-2*M).forEach(l => { if(pinta) x.fillText(l, M, y); y += 62*sc; });
+      if(card.nota){ y += 6; x.font = F(32*sc,500); quebra(x, card.nota, W-2*M).forEach(l => { if(pinta){ x.globalAlpha=.9; x.fillText(l, M, y); x.globalAlpha=1; } y += 42*sc; }); }
+      if(card.fecho){ y += 26*sc; x.font = F(50*sc,900); const tw = Math.min(W-2*M, x.measureText(card.fecho).width + 56), hh = 92*sc;
+        if(pinta){ x.fillStyle = "#fff"; x.beginPath(); x.roundRect(M, y, tw, hh, hh/2); x.fill(); x.fillStyle = "#a10d25"; x.fillText(card.fecho, M+28, y+hh*0.2, W-2*M-56); x.fillStyle = "#fff"; }
+        y += hh; }
+      return y;
+    }
+    const g = x.createLinearGradient(0,0,W*0.4,H); g.addColorStop(0,"#d0142f"); g.addColorStop(1,"#8a0a1d"); x.fillStyle = g; x.fillRect(0,0,W,H);
+    x.fillStyle = "#fff"; x.textBaseline = "top";
+    // topo: lugar (esquerda) e selo (direita)
+    x.font = F(34,800); quebra(x, card.lugar.toUpperCase(), W-2*M-260).slice(0,3).forEach((l,i) => x.fillText(l, M, TOPO+20+i*44));
+    const sr = 104, sx = W - M - sr, sy = TOPO + sr; x.save(); x.translate(sx, sy); x.rotate(-0.1);
+    x.fillStyle = "#fff"; x.beginPath(); x.arc(0,0,sr,0,Math.PI*2); x.fill(); x.fillStyle = "#a10d25"; x.textAlign = "center"; x.textBaseline = "middle";
+    x.font = F(24,900); x.fillText("DIA 25", 0, -54); x.font = F(90,900); x.fillText("13", 0, 6); x.font = F(22,900); x.fillText("VOTE LULA", 0, 62); x.restore();
+    x.textAlign = "left"; x.textBaseline = "top"; x.fillStyle = "#fff";
+    let sc = 1; while(sc > 0.55 && conteudo(sc, false) > RODAPE - 30) sc -= 0.05;
+    // no formato status, centraliza o bloco verticalmente no espaço livre
+    conteudo(sc, true);
+    // rodapé
+    let fy = RODAPE; x.fillStyle = "rgba(255,255,255,.35)"; x.fillRect(M, fy - 22, W-2*M, 2); x.fillStyle = "#fff";
+    x.font = F(28,600); quebra(x, `Fonte: ${card.fonteTxt}, ${card.periodo}`, W-2*M).slice(0,2).forEach(l => { x.fillText(l, M, fy); fy += 36; });
+    x.font = F(24,500); x.globalAlpha = .9; quebra(x, `Material de apoiadores, sem vínculo oficial com a campanha. Responsável: ${MARCA.responsavel}`, W-2*M).slice(0,2).forEach(l => { x.fillText(l, M, fy); fy += 32; }); x.globalAlpha = 1;
+    return cv;
+  }
+
+  // ---------- compartilhar
+  function urlLugar(c, bairro){ return location.origin + location.pathname + `#/${c.uf}/${slug(c.nome)}` + (bairro ? `/${slug(bairro)}` : ""); }
+  async function compartilha(card, cv, c, bairro){
+    const texto = `${card.texto} ${card.fecho||""} ${urlLugar(c, bairro)}`.trim();
+    const blob = await new Promise(r => cv.toBlob(r, "image/png"));
+    const file = new File([blob], `card-${slug(card.lugar).toLowerCase()}.png`, {type:"image/png"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file], text:texto}); return; }catch(e){ if(e.name === "AbortError") return; }
+    }
+    baixa(cv, card);
+    window.open("https://wa.me/?text=" + encodeURIComponent(texto), "_blank", "noopener");
+  }
+  function baixa(cv, card){ const a = document.createElement("a"); a.href = cv.toDataURL("image/png"); a.download = `card-${slug(card.lugar).toLowerCase()}.png`; document.body.appendChild(a); a.click(); a.remove(); }
+
+  // ---------- tela
+  async function abre(c, bairroSlug){
+    const box = $("#p-cards");
+    if(!MARCA.responsavel){ box.innerHTML = `<p class="cards-vazio">Os cards só são gerados com o responsável preenchido (configuração MARCA).</p>`; return; }
+    box.innerHTML = `<p class="loading">Carregando cards…</p>`;
+    let br, d;
+    try{ br = await loadBR(); const a = br.arq[c.id]; d = a ? (await loadArq(a)).mun[c.id] : {c:[], b:{}}; }
+    catch(e){ box.innerHTML = `<p class="loading">Não foi possível carregar os cards. Verifique a conexão.</p>`; return; }
+    const fix = k => ({...k, url: br.urls[k.url], fonteTxt: br.fontes[k.fonte]});
+    const bairros = Object.entries(d.b || {}).sort((a,b)=>a[1].nome.localeCompare(b[1].nome));
+    let bsel = bairroSlug ? (bairros.find(([k,v]) => slug(v.nome) === bairroSlug)||[])[0] || "" : "";
+    atual = {c, d, br, fix, bairros};
+    box.innerHTML = `<p class="hint" style="margin-top:0">Do mais perto ao mais amplo: bairro, cidade, estado e Brasil. Toque para compartilhar no WhatsApp.</p>
+      <div class="cards-bar">
+        ${bairros.length ? `<select id="cd-bairro" aria-label="Bairro"><option value="">Cidade toda</option>${bairros.map(([k,v])=>`<option value="${esc(k)}">${esc(v.nome)}</option>`).join("")}</select>` : ""}
+        <select id="cd-fmt" aria-label="Formato"><option value="feed">Feed (1080×1350)</option><option value="status">Status (1080×1920)</option></select>
+      </div>
+      <div class="chips" id="cd-filtro">${Object.entries(CAT).map(([k,l])=>`<button type="button" data-k="${k}" aria-pressed="${k===filtro}">${l}</button>`).join("")}</div>
+      <div class="carrossel" id="cd-lista"></div>`;
+    const sb = $("#cd-bairro"); if(sb){ sb.value = bsel; sb.onchange = () => { bsel = sb.value; marcaURL(); desenhaLista(); }; }
+    $("#cd-fmt").value = fmt; $("#cd-fmt").onchange = e => { fmt = e.target.value; desenhaLista(); };
+    $("#cd-filtro").onclick = e => { const b = e.target.closest("button"); if(!b) return; filtro = b.dataset.k;
+      $("#cd-filtro").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.k===filtro)); desenhaLista(); };
+    function marcaURL(){ const nb = bsel ? d.b[bsel].nome : ""; try{ history.replaceState(null, "", `#/${c.uf}/${slug(c.nome)}` + (nb ? `/${slug(nb)}` : "")); }catch(e){} }
+    function desenhaLista(){
+      const lista = [...(bsel ? d.b[bsel].cards : []), ...d.c, ...((br.uf||{})[c.uf]||[]), ...br.br].map(fix).filter(k => filtro==="todos" || k.cat===filtro);
+      const el = $("#cd-lista");
+      if(!lista.length){ el.innerHTML = `<p class="cards-vazio">Nenhum card deste tipo para este lugar. Os cards só saem quando o dado é verdadeiro, recente e do nível certo.</p>`; return; }
+      el.innerHTML = lista.map((k,i)=>`<div class="cd ${fmt}"><img alt="${esc(k.texto)}" data-i="${i}" loading="lazy"><div class="meta">${NIV[k.nivel]||""} · ${esc(k.fonteTxt)} · ${esc(k.periodo)}</div>
+        <div class="bts"><button type="button" class="wa" data-wa="${i}">Compartilhar no WhatsApp</button><button type="button" data-dl="${i}">Baixar</button></div></div>`).join("");
+      const io = new IntersectionObserver(es => es.forEach(e => { if(!e.isIntersecting) return; const im = e.target; io.unobserve(im);
+        const cv = desenha(lista[+im.dataset.i], fmt); im.src = cv.toDataURL("image/png"); }), {root:el, rootMargin:"0px 200px"});
+      el.querySelectorAll("img").forEach(im => io.observe(im));
+      el.onclick = e => { const b = e.target.closest("button"); if(!b) return;
+        const k = lista[+(b.dataset.wa ?? b.dataset.dl)]; const cv = desenha(k, fmt); const nb = bsel ? d.b[bsel].nome : "";
+        if(b.dataset.wa != null) compartilha(k, cv, c, nb); else baixa(cv, k); };
+    }
+    desenhaLista(); marcaURL();
+  }
+  return {abre, desenha};
+})();
+
 aplicaMarca(); topo(); desenhaPorte(); lista();
 (function(){
+  const rota = location.hash.match(/^#\/([A-Z]{2})\/([^\/]+)(?:\/([^\/]+))?$/);
+  if(rota){
+    const c = UNICAS.find(x => x.uf===rota[1] && slug(x.nome)===decodeURIComponent(rota[2]));
+    if(c){ escolhe(c); if(rota[3]){ const bt = document.querySelector('.tabs button[data-p="cards"]');
+      document.querySelectorAll(".tabs button").forEach(x=>x.setAttribute("aria-selected", x===bt)); ["locais","perfil","fed","cards"].forEach(p => $("#p-"+p).hidden = p !== "cards");
+      CARDS.abre(c, decodeURIComponent(rota[3])); } return; }
+  }
   let id = (location.hash.match(/^#c(\d{7})$/)||[])[1];
   if(!id){ try{ id = localStorage.getItem("cidade"); }catch(e){} }
   const c = id && UNICAS.find(x=>x.id===id);
