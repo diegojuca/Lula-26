@@ -844,7 +844,7 @@ const CARDS = (function(){
     $("#cd-fmt").value = fmt; $("#cd-fmt").onchange = e => { fmt = e.target.value; desenhaLista(); };
     $("#cd-filtro").onclick = e => { const b = e.target.closest("button"); if(!b) return; filtro = b.dataset.k;
       $("#cd-filtro").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.k===filtro)); desenhaLista(); };
-    function marcaURL(){ const nb = bsel ? d.b[bsel].nome : ""; try{ history.replaceState(null, "", `#/${c.uf}/${slug(c.nome)}` + (nb ? `/${slug(nb)}` : "")); }catch(e){} }
+    function marcaURL(){ const nb = bsel ? d.b[bsel].nome : ""; try{ history.replaceState(null, "", `#/${c.uf}/${slug(c.nome)}/` + (nb ? slug(nb) : "cards")); }catch(e){} }
     function desenhaLista(){
       // locais (bairro + cidade) pela pontuação de impacto, com teto por lugar e por programa; estado e Brasil só completam
       // quando o lugar tem poucos cards locais
