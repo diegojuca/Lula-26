@@ -67,9 +67,8 @@ Domínios bloqueados neste ambiente, nenhum deles necessário: `aplicacoes.cidad
 |---|---|---:|
 | Reconquista | reduto e Δ penetração ≤ −7 pp (Brasil: −4,6 pp) | 677 |
 | Mobilização | reduto e (abstenção 1T26 ≥ 25% ou ≥ histórica + 2 pp) | 295 |
-| Disputa | Lula 45–55% no 2T22 e eleitorado ≥ 50 mil | 106 |
+| Disputa | Lula 45–55% no 2T22, de qualquer tamanho (até 14/10/2026 exigia eleitorado ≥ 50 mil) | 1.008 |
 | Consolidado (contexto) | demais redutos | 1.689 |
-| Equilíbrio, pequeno porte (contexto) | 45–55% com eleitorado < 50 mil | 902 |
 | Adverso (contexto) | Lula < 45% no 2T22 | 1.900 |
 
 ## Validação contra o TSE

@@ -36,7 +36,7 @@ P = {
     "queda_relevante_pen": -7.0,  # variação de penetração (pp do eleitorado) <= -7 pp = queda relevante (quartil pior dos redutos; Brasil = -4,7 pp)
     "abst_alta": 25.0,          # abstenção 1T26 >= 25% = alta
     "abst_cresc": 2.0,          # abstenção 1T26 - abstenção histórica >= +2 pp = crescente
-    "disputa_aptos": 50_000,    # disputa exige eleitorado apto >= 50 mil
+    "disputa_aptos": 0,         # sem piso de eleitorado: cidade pequena dividida também é disputa (antes: 50 mil)
 }
 
 
