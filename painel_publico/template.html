@@ -363,12 +363,34 @@ function carrega(arq){
   return cache.get(arq);
 }
 
+// ----------------------------------------------------------------- contagem de acessos (GoatCounter)
+// Pixel próprio, sem script de terceiros e sem cookie: envia só o caminho do lugar (estado/cidade/bairro), o título, a
+// origem e o tamanho da tela. Fora do site publicado (teste local), não conta nada.
+const CONTADOR = "https://vira-voto.goatcounter.com/count";
+let ultimaContagem = "", esperaContagem;
+function conta(path, titulo, evento){
+  // visita: espera 1 s e conta só o último lugar (abrir um link de cards não vira duas visitas)
+  if(!evento){ clearTimeout(esperaContagem); esperaContagem = setTimeout(() => envia(path, titulo, false), 1000); return; }
+  envia(path, titulo, true);
+}
+function envia(path, titulo, evento){
+  try{
+    if(!/\.github\.io$/.test(location.hostname) || navigator.webdriver) return;
+    if(!evento){ if(path === ultimaContagem) return; ultimaContagem = path; }
+    const q = new URLSearchParams({p: path, t: titulo || document.title, rnd: Math.random().toString(36).slice(2),
+      s: `${screen.width},${screen.height},${window.devicePixelRatio||1}`});
+    if(evento) q.set("e", "true"); else if(document.referrer) q.set("r", document.referrer);
+    new Image().src = `${CONTADOR}?${q}`;
+  }catch(e){}
+}
+
 // ----------------------------------------------------------------- resultado
 function escolhe(c){
   if(!c) return;
   $("#q").value = `${c.nome} (${c.uf})`; $("#sug").innerHTML = ""; $("#hint").hidden = true;
   try{ localStorage.setItem("cidade", c.id); }catch(e){}
   try{ history.replaceState(null, "", `#/${c.uf}/${slug(c.nome)}`); }catch(e){}
+  conta(`/${c.uf}/${slug(c.nome)}`, `${c.nome} (${c.uf})`);
   const r = $("#resultado"); r.hidden = false;
   let h = `<div class="res-head"><h2>${esc(c.nome)}</h2><span class="uf">${UFN[c.uf]||c.uf}</span></div>`;
   if(c.acao){
@@ -814,11 +836,14 @@ const CARDS = (function(){
     const blob = await new Promise(r => cv.toBlob(r, "image/png"));
     const file = new File([blob], `card-${slug(card.lugar).toLowerCase()}.png`, {type:"image/png"});
     if(navigator.canShare && navigator.canShare({files:[file]})){
-      try{ await navigator.share({files:[file], text:texto}); return; }catch(e){ if(e.name === "AbortError") return; }
+      try{ await navigator.share({files:[file], text:texto}); contaCard("compartilhou", card, c, bairro); return; }catch(e){ if(e.name === "AbortError") return; }
     }
+    contaCard("compartilhou", card, c, bairro);
     baixa(cv, card);
     window.open("https://wa.me/?text=" + encodeURIComponent(texto), "_blank", "noopener");
   }
+  function contaCard(acao, card, c, bairro){
+    conta(`${acao}/${card.modelo}/${c.uf}/${slug(c.nome)}` + (bairro ? `/${slug(bairro)}` : ""), `${acao}: ${card.modelo} · ${bairro ? bairro + ", " : ""}${c.nome} (${c.uf})`, true); }
   function baixa(cv, card){ const a = document.createElement("a"); a.href = cv.toDataURL("image/png"); a.download = `card-${slug(card.lugar).toLowerCase()}.png`; document.body.appendChild(a); a.click(); a.remove(); }
 
   // ---------- tela
@@ -844,7 +869,9 @@ const CARDS = (function(){
     $("#cd-fmt").value = fmt; $("#cd-fmt").onchange = e => { fmt = e.target.value; desenhaLista(); };
     $("#cd-filtro").onclick = e => { const b = e.target.closest("button"); if(!b) return; filtro = b.dataset.k;
       $("#cd-filtro").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.k===filtro)); desenhaLista(); };
-    function marcaURL(){ const nb = bsel ? d.b[bsel].nome : ""; try{ history.replaceState(null, "", `#/${c.uf}/${slug(c.nome)}/` + (nb ? slug(nb) : "cards")); }catch(e){} }
+    function marcaURL(){ const nb = bsel ? d.b[bsel].nome : ""; const caminho = `/${c.uf}/${slug(c.nome)}/` + (nb ? slug(nb) : "cards");
+      try{ history.replaceState(null, "", "#" + caminho); }catch(e){}
+      conta(caminho, `Cards: ${nb ? nb + ", " : ""}${c.nome} (${c.uf})`); }
     function desenhaLista(){
       // locais (bairro + cidade) pela pontuação de impacto, com teto por lugar e por programa; estado e Brasil só completam
       // quando o lugar tem poucos cards locais
@@ -862,7 +889,7 @@ const CARDS = (function(){
       el.querySelectorAll("img").forEach(im => io.observe(im));
       el.onclick = e => { const b = e.target.closest("button"); if(!b) return;
         const k = lista[+(b.dataset.wa ?? b.dataset.dl)]; const cv = desenha(k, fmt); const nb = bsel ? d.b[bsel].nome : "";
-        if(b.dataset.wa != null) compartilha(k, cv, c, nb); else baixa(cv, k); };
+        if(b.dataset.wa != null) compartilha(k, cv, c, nb); else { contaCard("baixou", k, c, nb); baixa(cv, k); } };
     }
     desenhaLista(); marcaURL();
   }
@@ -881,7 +908,7 @@ aplicaMarca(); topo(); desenhaPorte(); lista();
   let id = (location.hash.match(/^#c(\d{7})$/)||[])[1];
   if(!id){ try{ id = localStorage.getItem("cidade"); }catch(e){} }
   const c = id && UNICAS.find(x=>x.id===id);
-  if(c){ escolhe(c); scrollTo(0,0); }
+  if(c){ escolhe(c); scrollTo(0,0); } else conta("/", document.title);
 })();
 </script>
 </body>
